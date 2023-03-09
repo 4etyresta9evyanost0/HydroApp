@@ -1,0 +1,12 @@
+﻿<Application x:Class="HydroApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:HydroApp"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <local:MainViewModel x:Key="Mvm" x:Name="Mvm"/>
+        <local:AuthorizationViewModel x:Key="AuthVm" x:Name="AuthVm"/>
+        <local:AdminPageViewModel x:Key="AdminVm" x:Name="AdminVm"/>
+        <local:TableViewModel x:Key="tableVm" x:Name="tableVm"/>
+    </Application.Resources>
+</Application>
