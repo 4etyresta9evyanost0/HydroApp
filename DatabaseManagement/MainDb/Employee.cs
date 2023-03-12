@@ -19,7 +19,7 @@ public partial class Employee
 
     public long? Phonenum { get; set; }
 
-    public int? Passport { get; set; }
+    public long? Passport { get; set; }
 
     public virtual Designer? Designer { get; set; }
 
