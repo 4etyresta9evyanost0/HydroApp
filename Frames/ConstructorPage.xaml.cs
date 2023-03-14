@@ -23,8 +23,9 @@ namespace HydroApp
     /// </summary>
     public partial class ConstructorPage : Page
     {
-        //TableViewModel TableViewModel;
-        public HydropressDbContext MainContext = new HydropressDbContext();
+        TableViewModel TableViewModel { get => (TableViewModel)Application.Current.Resources["tableVm"]; }
+        public HydropressDbContext MainContext;
+
 
 
         public ObservableCollection<Designer> Designers;
@@ -33,8 +34,9 @@ namespace HydroApp
         public RelayCommand? DeleteCommand { get; }
         public RelayCommand? AddCommand { get; }
 
-        public ConstructorPage()
+        public ConstructorPage(HydropressDbContext context)
         {
+            MainContext = context; //= new HydropressDbContext(Settings.Default.MainDbConnectionString);
             InitializeComponent();
             //TableViewModel = (DataContext as TableViewModel);
             Loaded += Page_Loaded;
@@ -42,7 +44,7 @@ namespace HydroApp
 
         private void DesignerSelected(object sender, RoutedEventArgs e)
         {
-            ;
+            TableViewModel.ConstrVm.Init();
         }
 
         private void DetailSelected(object sender, RoutedEventArgs e)

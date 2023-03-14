@@ -38,7 +38,6 @@ namespace HydroApp
     public partial class MainWindow : Window
     {
         TableViewModel tableVm { get => (TableViewModel)Application.Current.Resources["tableVm"]; }
-
         public HydropressDbContext MainDb { get => tableVm.MainDb; }
         public HydropressUserDbContext UserDb { get => tableVm.UserDb; }
 

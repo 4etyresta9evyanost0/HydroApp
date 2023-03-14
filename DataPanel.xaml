@@ -7,6 +7,9 @@
              xmlns:local="clr-namespace:HydroApp"
              mc:Ignorable="d" 
              d:DesignWidth="500">
+    <UserControl.Resources>
+        <local:StringToIntConverter x:Key="StringToIntConverter"/>
+    </UserControl.Resources>
     <StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -18,7 +21,11 @@
             </Grid.ColumnDefinitions>
             <Button Margin="5" Grid.Column="0" Content="Первый"></Button>
             <Button Margin="5" Grid.Column="1" Content="Предыдущий"></Button>
-            <xctk:UIntegerUpDown Margin="5" Grid.Column="2"></xctk:UIntegerUpDown>
+            <!--<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel}, Mode=FindAncestor}, Path=SelectedValue, Mode=TwoWay, Converter={StaticResource StringToIntConverter}}"></TextBox>-->
+            <xctk:IntegerUpDown  Margin="5" Grid.Column="2" Minimum="0" 
+                                 Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel},Mode=FindAncestor}, Path=SelectedValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                 Maximum="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel}}, Path=MaxValue, FallbackValue=0}"></xctk:IntegerUpDown>
+
             <Button Margin="5" Grid.Column="3" Content="Следующий"></Button>
             <Button Margin="5" Grid.Column="4" Content="Последний"></Button>
         </Grid>

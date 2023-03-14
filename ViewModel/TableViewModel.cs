@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Media3D;
 
 namespace HydroApp
@@ -13,11 +15,10 @@ namespace HydroApp
     class TableViewModel : ViewModel
     {
         #region Fields
-        HydropressDbContext _mainDb = new HydropressDbContext();
-        HydropressUserDbContext _userDb = new HydropressUserDbContext();
+        HydropressDbContext _mainDb;
+        HydropressUserDbContext _userDb;
 
         ConstructorViewModel constrVm;
-        DataPanelViewModel dataPanelVm;
 
         List<string> _mainDBTables = new List<string> {
             "CommissionDetails",
@@ -52,17 +53,23 @@ namespace HydroApp
         #endregion
 
         #region Properties
-        public HydropressDbContext MainDb { get => _mainDb; }
-        public HydropressUserDbContext UserDb { get => _userDb; }
-
-        public DataPanelViewModel DataPanelVm
-        {
-            get => dataPanelVm;
-            set
-            {
-                dataPanelVm = value;
-                OnPropertyChanged(nameof(DataPanelVm));
-            }
+        public HydropressDbContext MainDb 
+        {   get => _mainDb; 
+            set 
+            { 
+                _mainDb = value; 
+                OnPropertyChanged(nameof(MainDb));
+                OnContextChanged();
+            } 
+        }
+        public HydropressUserDbContext UserDb
+        { 
+            get => _userDb; 
+            set 
+            { 
+                _userDb = value; 
+                OnPropertyChanged(nameof(UserDb)); 
+            } 
         }
 
         public ConstructorViewModel ConstrVm
@@ -86,14 +93,9 @@ namespace HydroApp
             await maint;
             await usert;
         }
-        #endregion
 
-        public TableViewModel()
+        void LoadEvery()
         {
-            dataPanelVm = new DataPanelViewModel();
-            constrVm = new ConstructorViewModel(_mainDb);
-            _dbs = new DbContext[] { _mainDb, _userDb };
-            System.Windows.Application.Current.MainWindow.Closing += DisposeOfContexts;
             foreach (var db in _dbs)
                 db?.Database.EnsureCreated(); // гарантируем, что база данных создана
 
@@ -114,6 +116,23 @@ namespace HydroApp
             MainDb.Supplies.Load();
             MainDb.SupplyDetails.Load();
             MainDb.Workshops.Load();
+        }
+
+        public void OnContextChanged()
+        {
+            if (ConstrVm != null)
+                ConstrVm.Context = MainDb;
+        }
+        #endregion
+
+        public TableViewModel()
+        {
+            MainDb = new HydropressDbContext(Settings.Default.MainDbConnectionString);
+            UserDb = new HydropressUserDbContext(Settings.Default.UserDbConnectionString);
+            constrVm = new ConstructorViewModel(_mainDb);
+            _dbs = new DbContext[] { _mainDb, _userDb };
+            System.Windows.Application.Current.MainWindow.Closing += DisposeOfContexts;
+
         }
     }
 }

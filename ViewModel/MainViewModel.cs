@@ -191,11 +191,6 @@ namespace HydroApp
         bool isLoading;
         DataTable availableServers;
 
-        // for further use
-        //Server server;
-        //Database mainDb;
-        //Database userDb;
-
         UserSettings userSettings = new UserSettings();
         //UserSettings newSettings = new UserSettings();
         bool isInitialized;
@@ -217,11 +212,29 @@ namespace HydroApp
         SqlConnection mainConnection;
         SqlConnection userConnection;
 
-        //statusbar strings
-        //string serverSb;
-        //string mainDbSb;
-        //string userDbSb;
-        //string userSb;
+        HydropressDbContext mainContext;
+        HydropressUserDbContext userContext;
+
+        public HydropressDbContext MainContext
+        {
+            get => mainContext;
+            set
+            {
+                mainContext = value;
+                OnPropertyChanged(nameof(MainContext));
+                OnContextChanged();
+            }
+        }
+
+        public HydropressUserDbContext UserContext
+        {
+            get => userContext;
+            set
+            {
+                userContext = value;
+                OnPropertyChanged(nameof(UserContext));
+            }
+        }
 
         // time to connect to server
         int connectTimeout = 15;
@@ -249,29 +262,20 @@ namespace HydroApp
             mainPage = new MainMenu();
             authPage = new AuthorizationPage();
             serverPage = new ServerSelectorPage();
-            adminPage = new AdminPage();
-            commonPage = new CommonPage();
-            constructorPage = new ConstructorPage();
-            pages.Add(serverPage);
-            pages.Add(authPage);
-            pages.Add(mainPage);
-            //pages.Add();
-            LoadingTasks.CollectionChanged += (s, e) => IsLoading = !loadingTasks.IsNullOrEmpty();
-            Pages.CollectionChanged += (s, e) => { };
-            AvailablePages.CollectionChanged += (s, e) => { };
-            #endregion
+
+            // Соединение
             CurrentPage = serverPage;
             ReadJSONSettingsFile();
             var gotDbs = UserSettings.ServerName != null && UserSettings.MainDbName != null && UserSettings.UserDbName != null;
             if (gotDbs)
             {
-                var connectTask = Task.Run(()=>CreateConnectionToServer(UserSettings.ServerName, UserSettings.MainDbName, UserSettings.UserDbName));
+                var connectTask = Task.Run(() => CreateConnectionToServer(UserSettings.ServerName, UserSettings.MainDbName, UserSettings.UserDbName));
                 connectTask.Wait();
                 if (connectTask.Result)
                 {
                     CurrentPage = authPage;
                 }
-                if (UserSettings.Username != null && UserSettings.Password != null) 
+                if (UserSettings.Username != null && UserSettings.Password != null)
                 {
                     var authTask = Task.Run(() => Authorize(UserSettings.Username, UserSettings.Password));
                 }
@@ -281,6 +285,20 @@ namespace HydroApp
                 UserSettings = new UserSettings();
                 Task.Run(() => UpdateServers());
             }
+
+
+            adminPage = new AdminPage();
+            commonPage = new CommonPage();
+            constructorPage = new ConstructorPage(MainContext);
+            pages.Add(serverPage);
+            pages.Add(authPage);
+            pages.Add(mainPage);
+            //pages.Add();
+            LoadingTasks.CollectionChanged += (s, e) => IsLoading = !loadingTasks.IsNullOrEmpty();
+            Pages.CollectionChanged += (s, e) => { };
+            AvailablePages.CollectionChanged += (s, e) => { };
+            #endregion
+
         }
 
         public async Task CreateJSONSettingsFile()
@@ -306,6 +324,11 @@ namespace HydroApp
             }
         }
 
+        public void OnContextChanged()
+        {
+            if (constructorPage != null)
+                ((ConstructorPage)constructorPage).MainContext = MainContext;
+        }
 
         // statusbar strings
         //public string ServerName
@@ -505,7 +528,14 @@ namespace HydroApp
             //    "User_Messages",
             //    "User_Messages_Content"
             //};
+            if (res.Result == null)
+            {
+                Settings.Default.MainDbConnectionString = MainConnection.ConnectionString;
+                Settings.Default.UserDbConnectionString = UserConnection.ConnectionString;
 
+                MainContext = new HydropressDbContext(Settings.Default.MainDbConnectionString);
+                UserContext = new HydropressUserDbContext(Settings.Default.UserDbConnectionString);
+            }
 
             return res.Result == null;
 
