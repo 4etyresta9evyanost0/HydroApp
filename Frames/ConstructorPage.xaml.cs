@@ -26,13 +26,7 @@ namespace HydroApp
         TableViewModel TableViewModel { get => (TableViewModel)Application.Current.Resources["tableVm"]; }
         public HydropressDbContext MainContext;
 
-
-
         public ObservableCollection<Designer> Designers;
-
-        public RelayCommand? SaveCommand { get; }
-        public RelayCommand? DeleteCommand { get; }
-        public RelayCommand? AddCommand { get; }
 
         public ConstructorPage(HydropressDbContext context)
         {
@@ -70,14 +64,6 @@ namespace HydroApp
             MainContext.Employees.Load();
 
             Designers = MainContext.Designers.Local.ToObservableCollection();
-            //_allDesigners.ItemsSource = MainContext.Designers.Local;
-            //_desginerTabItem.DataContext = MainContext.Designers;
-
-            // 
-
-            // загружаем данные из БД
-            //TableViewModel.MainDb.Designers.Load();
-            // и устанавливаем данные в качестве контекста
         }
     }
 }

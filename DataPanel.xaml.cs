@@ -40,39 +40,7 @@ namespace HydroApp
         public static readonly DependencyProperty SelectedValueProperty =
             DependencyProperty.Register("SelectedValue", typeof(int), typeof(DataPanel), new PropertyMetadata(0));
 
-
-
-        public object SelectedItem
-        {
-            get { return GetValue(SelectedItemProperty); }
-            set
-            {
-                SetValue(SelectedItemProperty, value);
-                SelectedChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SelectedItemProperty =
-            DependencyProperty.Register("SelectedItem", typeof(object), typeof(DataPanel), new PropertyMetadata(null));
-
-
         public static event EventHandler? SelectedChanged;
-
-
-        //public ObservableCollection<object> Collection
-        //{
-        //    get { return (ObservableCollection<object>)GetValue(CollectionProperty); }
-        //    set
-        //    {
-        //        SetValue(CollectionProperty, value);
-        //        MaxValue = value.Count;
-        //    }
-        //}
-
-        //// Using a DependencyProperty as the backing store for Collection.  This enables animation, styling, binding, etc...
-        //public static readonly DependencyProperty CollectionProperty =
-        //    DependencyProperty.Register("Collection", typeof(ObservableCollection<object>), typeof(DataPanel), new PropertyMetadata(null, OnCollectionChanged));
 
         private static void OnCollectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -111,6 +79,69 @@ namespace HydroApp
         {
             InitializeComponent();
         }
+
+        private void IntegerUpDown_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            var ch = e.Text[0];
+            if (!int.TryParse(ch + "", out _))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void SelectFirst_Click(object sender, RoutedEventArgs e)
+        {
+            SelectedValue = 1;
+        }
+        private void SelectBack_Click(object sender, RoutedEventArgs e)
+        {
+            SelectedValue = SelectedValue == 1 ? SelectedValue : SelectedValue - 1;
+        }
+
+        private void SelectNext_Click(object sender, RoutedEventArgs e)
+        {
+            SelectedValue = SelectedValue == MaxValue ? SelectedValue : SelectedValue + 1 ;
+        }
+
+        private void SelectLast_Click(object sender, RoutedEventArgs e)
+        {
+            SelectedValue = MaxValue;
+        }
+
+
+
+        public RelayCommand? AddCommand
+        {
+            get { return (RelayCommand?)GetValue(AddCommandProperty); }
+            set { SetValue(AddCommandProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for AddCommand.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty AddCommandProperty =
+            DependencyProperty.Register("AddCommand", typeof(RelayCommand), typeof(DataPanel), new PropertyMetadata(null));
+
+        public RelayCommand? RemoveCommand
+        {
+            get { return (RelayCommand?)GetValue(RemoveCommandProperty); }
+            set { SetValue(RemoveCommandProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for RemoveCommand.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty RemoveCommandProperty =
+            DependencyProperty.Register("RemoveCommand", typeof(RelayCommand), typeof(DataPanel), new PropertyMetadata(null));
+
+        public RelayCommand? SaveCommand
+        {
+            get { return (RelayCommand?)GetValue(SaveCommandProperty); }
+            set { SetValue(SaveCommandProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SaveCommand.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SaveCommandProperty =
+            DependencyProperty.Register("SaveCommand", typeof(RelayCommand), typeof(DataPanel), new PropertyMetadata(null));
+
+
+
     }
 
     public class StringToIntConverter : IValueConverter
@@ -132,6 +163,29 @@ namespace HydroApp
             if (value is int num)
             {
                 return num.ToString();
+            }
+            return null;
+        }
+    }
+
+    public class ZeroEnumeratorToOneEnumerator : IValueConverter
+    {
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // zero to one
+            if (value is int num)
+            {
+                return ++num; 
+            }
+            return null;
+        }
+
+        public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            // one to zero
+            if (value is int num)
+            {
+                return --num;
             }
             return null;
         }

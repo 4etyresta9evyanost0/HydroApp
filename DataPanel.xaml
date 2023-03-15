@@ -19,15 +19,16 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Margin="5" Grid.Column="0" Content="Первый"></Button>
-            <Button Margin="5" Grid.Column="1" Content="Предыдущий"></Button>
+            <Button Margin="5" Grid.Column="0" Content="Первый" Click="SelectFirst_Click"></Button>
+            <Button Margin="5" Grid.Column="1" Content="Предыдущий" Click="SelectBack_Click"></Button>
             <!--<TextBox Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel}, Mode=FindAncestor}, Path=SelectedValue, Mode=TwoWay, Converter={StaticResource StringToIntConverter}}"></TextBox>-->
-            <xctk:IntegerUpDown  Margin="5" Grid.Column="2" Minimum="0" 
-                                 Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel},Mode=FindAncestor}, Path=SelectedValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+            <xctk:IntegerUpDown  Margin="5" Grid.Column="2" Minimum="1"
+                                 PreviewTextInput="IntegerUpDown_PreviewTextInput"
+                                 Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel},Mode=FindAncestor}, Path=SelectedValue, UpdateSourceTrigger=PropertyChanged, FallbackValue=1, Mode=TwoWay}"
                                  Maximum="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel}}, Path=MaxValue, FallbackValue=0}"></xctk:IntegerUpDown>
 
-            <Button Margin="5" Grid.Column="3" Content="Следующий"></Button>
-            <Button Margin="5" Grid.Column="4" Content="Последний"></Button>
+            <Button Margin="5" Grid.Column="3" Content="Следующий" Click="SelectNext_Click"></Button>
+            <Button Margin="5" Grid.Column="4" Content="Последний" Click="SelectLast_Click"></Button>
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -35,9 +36,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Margin="5" Grid.Column="0" Content="Добавить"></Button>
-            <Button Margin="5" Grid.Column="1" Content="Сохранить"></Button>
-            <Button Margin="5" Grid.Column="2" Content="Удалить"></Button>
+            <Button Margin="5" Grid.Column="0" Content="Добавить" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel}}, Path=AddCommand}"></Button>
+            <Button Margin="5" Grid.Column="1" Content="Сохранить" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel}}, Path=SaveCommand}"></Button>
+            <Button Margin="5" Grid.Column="2" Content="Удалить" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataPanel}}, Path=RemoveCommand}"></Button>
         </Grid>
     </StackPanel>
 </UserControl>
