@@ -7,9 +7,9 @@ public partial class Production
 {
     public int Id { get; set; }
 
-    public int? BrandName { get; set; }
+    public string? BrandName { get; set; }
 
-    public int? Type { get; set; }
+    public string? Type { get; set; }
 
     public virtual ICollection<DetailsForProduction> DetailsForProductions { get; } = new List<DetailsForProduction>();
 

@@ -27,51 +27,52 @@
                         MaxValue="{Binding Designers.Count, FallbackValue=0}" 
                         SelectedValue="{Binding SelectedValueDesigner, Mode=TwoWay,
                             Converter={StaticResource ZeroEnumeratorToOneEnumerator}}"
-                        AddCommand="{Binding AddCommand}"
-                        SaveCommand="{Binding SaveCommand}"
-                        RemoveCommand="{Binding RemoveCommand}"                 
+                        AddCommand="{Binding AddCommandDesigner}"
+                        SaveCommand="{Binding SaveCommandDesigner}"
+                        RemoveCommand="{Binding RemoveCommandDesigner}"
+                        UpdateCommand="{Binding UpdateCommand}"
                                          ></local:DataPanel>
                         <Grid Background="#FFE5E5E5">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <StackPanel DataContext="{Binding SelectedDesigner}" HorizontalAlignment="Left" VerticalAlignment="Top">
                                 <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                                     <Label Padding="2" Width="100">ID:</Label>
                                     <TextBox x:Name="_constructorIdTb" IsReadOnly="True" Width="150"
-                                         Text="{Binding Id}"></TextBox>
+                                         Text="{Binding Id, UpdateSourceTrigger=PropertyChanged,IsAsync=True, Delay=50}"></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                                     <Label Padding="2" Width="100" Content="Фамилия:"/>
                                     <TextBox x:Name="_surnameTb" Width="150"
-                                             Text="{Binding IdNavigation.Surname}"></TextBox>
+                                             Text="{Binding IdNavigation.Surname, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                                     <Label Padding="2" Width="100" Content="Имя:"/>
                                     <TextBox x:Name="_nameTb" Width="150"
-                                             Text="{Binding IdNavigation.Firstname}"></TextBox>
+                                             Text="{Binding IdNavigation.Firstname, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                                     <Label Padding="2" Width="100" Content="Отчество:"/>
                                     <TextBox x:Name="_patronymTb" Width="150"
-                                             Text="{Binding IdNavigation.Patronym}"></TextBox>
+                                             Text="{Binding IdNavigation.Patronym, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                                     <Label Padding="2" Width="100" Content="Должность:"/>
                                     <TextBox x:Name="_occupationTb" Width="150"
-                                             Text="{Binding IdNavigation.Occupation}"></TextBox>
+                                             Text="{Binding IdNavigation.Occupation, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                                     <Label Padding="2" Width="100" Content="Адрес:"/>
                                     <TextBox x:Name="_addressTb" Width="150"
-                                             Text="{Binding IdNavigation.Adress}"></TextBox>
+                                             Text="{Binding IdNavigation.Adress, UpdateSourceTrigger=PropertyChanged}"></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                                     <Label Padding="2" Width="100" Content="Номер телефона:"/>
                                     <xctk:MaskedTextBox  
                                         IncludeLiteralsInValue="False"
-                                        Value="{Binding IdNavigation.Phonenum}"
+                                        Value="{Binding IdNavigation.Phonenum, UpdateSourceTrigger=PropertyChanged}"
                                         Mask="+7(000)00-00-000"
                                         x:Name="_phonenumTb" Width="150"
                                         ValueDataType="{x:Type s:Int64}"
@@ -81,24 +82,28 @@
                                     <Label Padding="2" Width="100" Content="Паспорт:"/>
                                     <xctk:MaskedTextBox 
                                         IncludeLiteralsInValue="False"
-                                        Value="{Binding IdNavigation.Passport}"
+                                        Value="{Binding IdNavigation.Passport, UpdateSourceTrigger=PropertyChanged}"
                                         Mask="0000-000000" 
                                         x:Name="_passportTb" Width="150" 
                                         ValueDataType="{x:Type s:Int64}"
                                              ></xctk:MaskedTextBox>
                                 </StackPanel>
                             </StackPanel>
-                            <Label Grid.Column="1" Content="Все конструкторы:" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <ListBox SelectedItem="{Binding SelectedDesigner}" SelectedIndex="{Binding SelectedValueDesigner}"  x:Name="_allDesigners" ItemsSource="{Binding Designers}" Grid.Column="1" Margin="5,25,5,5">
+                            <Label Grid.Column="1" Content="Все конструкторы:" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <ListBox x:Name="_allDesigners" 
+                                SelectedItem="{Binding SelectedDesigner}" 
+                                SelectedIndex="{Binding SelectedValueDesigner}"
+                                ItemsSource="{Binding Designers, UpdateSourceTrigger=PropertyChanged,IsAsync=True, Delay=50}" 
+                                Grid.Column="1" Margin="5,25,5,5">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel>
                                             <TextBlock FontSize="19">
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="{}ID: {0} - {1}">
-                                                        <Binding Path="IdNavigation.Id">
+                                                        <Binding Path="IdNavigation.Id" UpdateSourceTrigger="PropertyChanged" >
                                                         </Binding>
-                                                        <Binding Path="IdNavigation.Occupation">
+                                                        <Binding Path="IdNavigation.Occupation" UpdateSourceTrigger="PropertyChanged">
                                                         </Binding>
                                                     </MultiBinding>
                                                 </TextBlock.Text>
@@ -106,11 +111,11 @@
                                             <TextBlock FontSize="16" Foreground="#666">
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="{}{0} {1} {2}">
-                                                        <Binding Path="IdNavigation.Surname">
+                                                        <Binding Path="IdNavigation.Surname" UpdateSourceTrigger="PropertyChanged">
                                                         </Binding>
-                                                        <Binding Path="IdNavigation.Firstname">
+                                                        <Binding Path="IdNavigation.Firstname" UpdateSourceTrigger="PropertyChanged">
                                                         </Binding>
-                                                        <Binding Path="IdNavigation.Patronym">
+                                                        <Binding Path="IdNavigation.Patronym" UpdateSourceTrigger="PropertyChanged">
                                                         </Binding>
                                                     </MultiBinding>
                                                 </TextBlock.Text>
@@ -126,59 +131,157 @@
                 <TabItem Selector.Selected="DetailSelected"
                     x:Name="_detailTabItem" Header="Деталь">
                     <DockPanel>
-                        <local:DataPanel DockPanel.Dock="Bottom"></local:DataPanel>
-                    <Grid Background="#FFE5E5E5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="53*"/>
-                            <RowDefinition Height="83*"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Focusable="False" Grid.Column="0" Grid.RowSpan="2">
-                            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                                <Label Padding="2" Width="100" Content="ID:"/>
-                                <TextBox x:Name="_detailIdTb" IsReadOnly="True" Width="150"></TextBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                                <Label Padding="2" Width="100" Content="Наименование:"/>
-                                <TextBox x:Name="_detailNameTb" Width="150"></TextBox>
+                        <local:DataPanel DockPanel.Dock="Bottom"
+                        MaxValue="{Binding Details.Count, FallbackValue=0}" 
+                        SelectedValue="{Binding SelectedValueDetail, Mode=TwoWay,
+                            Converter={StaticResource ZeroEnumeratorToOneEnumerator}}"
+                        AddCommand="{Binding AddCommandDetail}"
+                        SaveCommand="{Binding SaveCommandDetail}"
+                        RemoveCommand="{Binding RemoveCommandDetail}"
+                        UpdateCommand="{Binding UpdateCommand}"></local:DataPanel>
+                        <Grid Background="#FFE5E5E5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="53*"/>
+                                <RowDefinition Height="83*"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel DataContext="{Binding SelectedDetail}" Focusable="False" Grid.Column="0" Grid.RowSpan="2">
+                                <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
+                                    <Label Padding="2" Width="100" Content="ID:"/>
+                                    <TextBox x:Name="_detailIdTb" IsReadOnly="True" Width="150"
+                                             Text="{Binding Id}"></TextBox>
                                 </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                                <Label Padding="2" Width="100" Content="Разработчик:"/>
-                                <TextBox x:Name="_detailDeveloperTb" Width="150"></TextBox>
+                                <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
+                                    <Label Padding="2" Width="100" Content="Наименование:"/>
+                                    <TextBox x:Name="_detailNameTb" Width="150"
+                                             Text="{Binding IdNavigation.Name}"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
+                                    <Label Padding="2" Width="100" Content="Разработчик:"/>
+                                    <ComboBox x:Name="_detailDeveloperTb" Width="150"
+                                             SelectedItem="{Binding IdNavigation.DeveloperNavigation}"
+                                             SelectedValuePath="IdNavigation.Id"
+                                             DisplayMemberPath="IdNavigation.Firstname"></ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
+                                    <Label Padding="2" Width="100" Content="Цена:"/>
+                                    <TextBox x:Name="_detailCostTb" IsReadOnly="True" Width="150"
+                                             Text="{Binding IdNavigation.Price}"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
+                                    <Label Padding="2" Width="100" Content="Предназначение:"/>
+                                    <TextBox x:Name="_purposeTb" Width="150"
+                                             Text="{Binding Purpose}"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
+                                    <Label Padding="2" Width="100" Content="Ширина:"/>
+                                    <xctk:DoubleUpDown x:Name="_widthTb" Width="150"
+                                             Value="{Binding Width}"></xctk:DoubleUpDown>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
+                                    <Label Padding="2" Width="100" Content="Высота:"/>
+                                    <xctk:DoubleUpDown x:Name="_heightTb"  Width="150"
+                                             Value="{Binding Height}"></xctk:DoubleUpDown>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
+                                    <Label Padding="2" Width="100" Content="Длина:"/>
+                                    <xctk:DoubleUpDown x:Name="_lengthTb"  Width="150"
+                                             Value="{Binding Length}"></xctk:DoubleUpDown>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
+                                    <Label Padding="2" Width="100" Content="Количество:"/>
+                                    <xctk:IntegerUpDown ShowButtonSpinner="False" x:Name="_detailAmountTb" IsReadOnly="True" Value="0" Width="150"></xctk:IntegerUpDown>
+                                </StackPanel>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                                <Label Padding="2" Width="100" Content="Цена:"/>
-                                <TextBox x:Name="_detailCostTb" IsReadOnly="True" Width="150"></TextBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                                <Label Padding="2" Width="100" Content="Предназначение:"/>
-                                <TextBox x:Name="_purposeTb" Width="150"></TextBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                                <Label Padding="2" Width="100" Content="Ширина:"/>
-                                <TextBox x:Name="_widthTb" Width="150"></TextBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                                <Label Padding="2" Width="100" Content="Высота:"/>
-                                <TextBox x:Name="_heightTb"  Width="150"></TextBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                                <Label Padding="2" Width="100" Content="Длина:"/>
-                                <TextBox x:Name="_lengthTb"  Width="150"></TextBox>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                                <Label Padding="2" Width="100" Content="Количество:"/>
-                                <xctk:IntegerUpDown ShowButtonSpinner="False" x:Name="_detailAmountTb" IsReadOnly="True" Value="0" Width="150"></xctk:IntegerUpDown>
-                            </StackPanel>
-                        </StackPanel>
-                        <Label Grid.Column="1" Content="Все детали:" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        <ListBox Grid.Column="1" Margin="5,25,5,5"/>
-                        <Label Grid.Column="1" Grid.Row="1"  Content="Материалы:" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        <ListBox Grid.Column="1" Grid.Row="1" Margin="5,25,5,5"/>
-                    </Grid>
+                            <Label Grid.Column="1" Content="Все детали:" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <ListBox Grid.Column="1" Margin="5,25,5,5" x:Name="_allDetails"
+                                SelectedItem="{Binding SelectedDetail}" 
+                                SelectedIndex="{Binding SelectedValueDetail}"
+                                ItemsSource="{Binding Details, UpdateSourceTrigger=PropertyChanged}" 
+                                >
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock FontSize="19">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}ID: {0} - {1}">
+                                                        <Binding Path="IdNavigation.Id" UpdateSourceTrigger="PropertyChanged" >
+                                                        </Binding>
+                                                        <Binding Path="IdNavigation.Name" UpdateSourceTrigger="PropertyChanged">
+                                                        </Binding>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                            <TextBlock FontSize="16" Foreground="#666">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0}. {1}w {2}h {3}l">
+                                                        <Binding Path="Purpose" UpdateSourceTrigger="PropertyChanged">
+                                                        </Binding>
+                                                        <Binding Path="Width" UpdateSourceTrigger="PropertyChanged">
+                                                        </Binding>
+                                                        <Binding Path="Height" UpdateSourceTrigger="PropertyChanged">
+                                                        </Binding>
+                                                        <Binding Path="Length" UpdateSourceTrigger="PropertyChanged">
+                                                        </Binding>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <Label Grid.Column="1" Grid.Row="1"  Content="Материалы:" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                            <ListBox Grid.Column="1" Grid.Row="1" Margin="5,25,5,5"
+                                DataContext="{Binding SelectedDetail, UpdateSourceTrigger=PropertyChanged}"
+                                ItemsSource="{Binding MaterialsForDetails, UpdateSourceTrigger=PropertyChanged}"
+                                >
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock FontSize="19">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0}: {1} {2}">
+                                                        <Binding Path="IdMaterialNavigation.Name" UpdateSourceTrigger="PropertyChanged">
+                                                        </Binding>
+                                                        <Binding Path="MaterialsAmount" UpdateSourceTrigger="PropertyChanged">
+                                                        </Binding>
+                                                        <Binding Path="IdMaterialNavigation.Unit" UpdateSourceTrigger="PropertyChanged">
+                                                        </Binding>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <ListBox.ContextMenu>
+                                    <ContextMenu x:Name="_ContextMenu" Opened="ContextMenu_Opened">
+                                        <ContextMenu.Style>
+                                            <Style TargetType="{x:Type ContextMenu}">
+                                                <Setter Property="ItemsPanel">
+                                                    <Setter.Value>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Margin="-20,0,0,0" Background="White"/>
+                                                        </ItemsPanelTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Padding" Value="0"/>
+                                            </Style>
+                                        </ContextMenu.Style>
+                                        <MenuItem Click="MenuItem_Click"></MenuItem>
+                                        <ListBox x:Name="_addMaterialsListBox" >
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                        </Grid>
                     </DockPanel>
                 </TabItem>
                 <TabItem Selector.Selected="ProductionSelected"
@@ -225,7 +328,7 @@
                                 </StackPanel>
                             </StackPanel>
                             <Label Grid.Column="1" Content="Вся продукция:" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                            <ListBox Grid.Column="1" Margin="5,25,5,5"/>
+                            <ListBox Grid.Column="1" Margin="5,25,5,5" x:Name="_allProducts"/>
                             <Label Grid.Column="1" Grid.Row="1"  Content="Детали:" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                             <ListBox Grid.Column="1" Grid.Row="1" Margin="5,25,5,5"/>
                         </Grid>

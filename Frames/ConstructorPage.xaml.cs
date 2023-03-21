@@ -23,6 +23,9 @@ namespace HydroApp
     /// </summary>
     public partial class ConstructorPage : Page
     {
+
+
+
         TableViewModel TableViewModel { get => (TableViewModel)Application.Current.Resources["tableVm"]; }
         public HydropressDbContext MainContext;
 
@@ -34,6 +37,11 @@ namespace HydroApp
             InitializeComponent();
             //TableViewModel = (DataContext as TableViewModel);
             Loaded += Page_Loaded;
+            TableViewModel.ConstrVm.DesignerLb = _allDesigners;
+            TableViewModel.ConstrVm.DetailLb = _allDetails;
+            TableViewModel.ConstrVm.ProductLb = _allProducts;
+
+            TableViewModel.ConstrVm.DetailDeveloperTb = _detailDeveloperTb;
         }
 
         private void DesignerSelected(object sender, RoutedEventArgs e)
@@ -64,6 +72,19 @@ namespace HydroApp
             MainContext.Employees.Load();
 
             Designers = MainContext.Designers.Local.ToObservableCollection();
+        }
+
+        private void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            MainContext.Materials.Load();
+            var list = MainContext.Materials.Local.ToObservableCollection();
+
+            _addMaterialsListBox.ItemsSource = list.OrderBy(x => x.Type);
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

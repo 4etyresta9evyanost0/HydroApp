@@ -9,11 +9,11 @@ public partial class Detail
 
     public string Purpose { get; set; } = null!;
 
-    public float Width { get; set; }
+    public double Width { get; set; }
 
-    public float Height { get; set; }
+    public double Height { get; set; }
 
-    public float Length { get; set; }
+    public double Length { get; set; }
 
     public virtual ICollection<Batch> Batches { get; } = new List<Batch>();
 

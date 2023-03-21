@@ -142,6 +142,18 @@ namespace HydroApp
 
 
 
+        public RelayCommand? UpdateCommand
+        {
+            get { return (RelayCommand?)GetValue(UpdateCommandProperty); }
+            set { SetValue(UpdateCommandProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for UpdateCommand.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty UpdateCommandProperty =
+            DependencyProperty.Register("UpdateCommand", typeof(RelayCommand), typeof(DataPanel), new PropertyMetadata(null));
+
+
+
     }
 
     public class StringToIntConverter : IValueConverter

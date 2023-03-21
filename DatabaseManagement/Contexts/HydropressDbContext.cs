@@ -230,6 +230,8 @@ namespace HydroApp
                 entity.HasKey(e => e.Id).HasName("PK_ProductionId");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.BrandName).HasMaxLength(32);
+                entity.Property(e => e.Type).HasMaxLength(32);
 
                 entity.HasOne(d => d.IdNavigation).WithOne(p => p.Production)
                     .HasForeignKey<Production>(d => d.Id)
