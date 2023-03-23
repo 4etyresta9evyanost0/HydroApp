@@ -19,55 +19,56 @@ using Xceed.Wpf.Toolkit;
 namespace HydroApp
 {
     /// <summary>
-    /// Логика взаимодействия для AddNewMaterial.xaml
+    /// Логика взаимодействия для AddNewDetail.xaml
     /// </summary>
-    public partial class AddNewMaterial : Window
+    public partial class AddNewDetail : Window
     {
-        public AddNewMaterial(HydropressDbContext context, IEnumerable<MaterialsForDetail> existingMaterials)
+        public AddNewDetail(HydropressDbContext context, IEnumerable<DetailsForProduction> existingDetails)
         {
             InitializeComponent();
-            context.Materials.Load();
-            Material[] array = new Material[context.Materials.Local.Count];
-            context.Materials.Local.ToList().CopyTo(array);
-            var list = new List<Material>(array);
-            for (int i = 0; i < list.Count; i++ )
+            context.Constructions.Load();
+            context.Details.Load();
+
+            Detail[] array = new Detail[context.Details.Local.Count];
+            context.Details.Local.ToList().CopyTo(array);
+            var list = new List<Detail>(array);
+            for (int i = 0; i < list.Count; i++)
             {
                 var item = list[i];
-                if (existingMaterials.Any(x=> item.Id == x.IdMaterial))
+                if (existingDetails.Any(x => item.Id == x.IdDetail))
                 {
                     list.Remove(item);
                     i--;
                 }
             }
-            _addMaterialsListBox.ItemsSource = list.OrderBy(x => x.Type);
+            _addDetailsListBox.ItemsSource = list.OrderBy(x => x.Purpose);
         }
-
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
         }
 
-        public List<(bool, Material, double)>? Result 
+        public List<(bool, Detail, int)>? Result
         {
             get
             {
-                var result = new List<(bool, Material, double)>();
-                var list = (IOrderedEnumerable<Material>)_addMaterialsListBox.ItemsSource;
+                var result = new List<(bool, Detail, int)>();
+                var list = (IOrderedEnumerable<Detail>)_addDetailsListBox.ItemsSource;
                 for (int i = 0; i < list.Count(); i++)
                 {
-                    var datatemplate = _addMaterialsListBox.ItemContainerGenerator.ContainerFromIndex(i);
+                    var datatemplate = _addDetailsListBox.ItemContainerGenerator.ContainerFromIndex(i);
                     var cp = (ContentPresenter)datatemplate;
                     var border = VisualTreeHelper.GetChild(cp, 0);
                     var stackpanel = VisualTreeHelper.GetChild(border, 0);
 
                     var cb = (CheckBox)VisualTreeHelper.GetChild(stackpanel, 0);
-                    var upDown = (DoubleUpDown)VisualTreeHelper.GetChild(stackpanel, 2);
-                    var material = list.ElementAt(i);
+                    var upDown = (IntegerUpDown)VisualTreeHelper.GetChild(stackpanel, 2);
+                    var detail = list.ElementAt(i);
 
-                    result.Add(new(cb.IsChecked ?? false, material, upDown.Value ?? 0));
+                    result.Add(new(cb.IsChecked ?? false, detail, upDown.Value ?? 0));
                 }
                 return result;
-            } 
+            }
         }
     }
 }

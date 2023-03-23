@@ -22,8 +22,19 @@ namespace HydroApp
         ListBox _detailLb;
         ListBox _productLb;
 
-        ComboBox _detailDeveloperTb;
+        ComboBox _productDeveloperTb;
+        public ComboBox ProductDeveloperTb
+        {
+            get => _productDeveloperTb;
+            set
+            {
+                _productDeveloperTb = value;
+                OnPropertyChanged(nameof(ProductDeveloperTb));
+            }
+        }
 
+
+        ComboBox _detailDeveloperTb;
         public ComboBox DetailDeveloperTb
         {
             get => _detailDeveloperTb;
@@ -91,7 +102,7 @@ namespace HydroApp
         }
 
 
-        public Designer? selectedDesigner;
+        Designer? selectedDesigner;
         public Designer? SelectedDesigner
         {
             get => selectedDesigner;
@@ -102,7 +113,7 @@ namespace HydroApp
             }
         }
 
-        public Detail? selectedDetail;
+        Detail? selectedDetail;
         public Detail? SelectedDetail
         {
             get => selectedDetail;
@@ -112,7 +123,33 @@ namespace HydroApp
                 OnPropertyChanged(nameof(SelectedDetail));
             }
         }
-        public Production? selectedProduct;
+
+        MaterialsForDetail? selectedMaterialForDetail;
+
+        public MaterialsForDetail? SelectedMaterailForDetail
+        {
+            get => selectedMaterialForDetail;
+            set
+            {
+                selectedMaterialForDetail = value;
+                OnPropertyChanged(nameof(SelectedMaterailForDetail));
+            }
+        }
+
+        DetailsForProduction? selectedDetailForProduction;
+
+        public DetailsForProduction? SelectedDetailForProduction
+        {
+            get => selectedDetailForProduction;
+            set
+            {
+                selectedDetailForProduction = value;
+                OnPropertyChanged(nameof(SelectedDetailForProduction));
+            }
+        }
+
+
+        Production? selectedProduct;
         public Production? SelectedProduct
         {
             get => selectedProduct;
@@ -134,11 +171,12 @@ namespace HydroApp
             Context.Constructions.Load();
 
             Context.Details.Load();
+
             Context.Materials.Load();
             Context.MaterialsForDetails.Load();
 
             Context.Productions.Load();
-
+            Context.DetailsForProductions.Load();
           
 
             Designers = Context.Designers.Local.ToObservableCollection();
@@ -153,7 +191,7 @@ namespace HydroApp
 
 
 
-            DetailDeveloperTb.ItemsSource = Designers;
+            ProductDeveloperTb.ItemsSource = DetailDeveloperTb.ItemsSource = Designers;
         }
 
         public ConstructorViewModel(HydropressDbContext context)
@@ -278,7 +316,9 @@ namespace HydroApp
                     // TODO: добавить ограничение только для админов
                     if (MessageBox.Show("Вы уверены, что хотите удалить выделенный элемент?", "") == MessageBoxResult.OK)
                     {
+                        var empl = SelectedDesigner.IdNavigation;
                         Designers.Remove(SelectedDesigner);
+                        Context.Employees.Remove(empl);
                     }
                 });
             }
@@ -335,7 +375,7 @@ namespace HydroApp
                     {
                         IdNavigation = _newConstructionDetail
                     };
-                    Context.Employees.Add(_newEmployee);
+                    Context.Constructions.Add(_newConstructionDetail);
                     Context.Details.Add(NewDetail);
 
 
@@ -365,7 +405,7 @@ namespace HydroApp
                         amountAdded = -1;
                         error = ex.Message;
                     }
-                    MessageBox.Show($"Код: {(amountAdded == -1? $"-1\r\nПроизошла ошибка: {error}" : (amountAdded == 0 ? "0\r\nЗапеси не были добавлены" : $"1\r\nКоличество добавленных записей:{amountAdded}"))}");
+                    MessageBox.Show($"Код: {(amountAdded == -1? $"-1\r\nПроизошла ошибка: {error}" : (amountAdded == 0 ? "0\r\nЗаписи не были добавлены" : $"1\r\nКоличество добавленных записей:{amountAdded}"))}");
                 });
             }
         }
@@ -378,7 +418,12 @@ namespace HydroApp
             {
                 return _removeCommandDetail ??= new RelayCommand(obj =>
                 {
-                    MessageBox.Show("Удаление детали");
+                    if (MessageBox.Show("Вы уверены, что хотите удалить выделенный элемент?", "") == MessageBoxResult.OK)
+                    {
+                        var constr = SelectedDetail.IdNavigation;
+                        Details.Remove(SelectedDetail);
+                        Context.Constructions.Remove(constr);
+                    }
                 });
             }
         }
@@ -422,7 +467,7 @@ namespace HydroApp
                     {
                         IdNavigation = _newConstructionProduction
                     };
-                    Context.Employees.Add(_newEmployee);
+                    Context.Constructions.Add(_newConstructionProduction);
                     Context.Productions.Add(NewProduct);
 
 
@@ -459,7 +504,12 @@ namespace HydroApp
             {
                 return _removeCommandProduct ??= new RelayCommand(obj =>
                 {
-                    MessageBox.Show("Удаление продукции");
+                    if (MessageBox.Show("Вы уверены, что хотите удалить выделенный элемент?", "") == MessageBoxResult.OK)
+                    {
+                        var constr = SelectedProduct.IdNavigation;
+                        Products.Remove(SelectedProduct);
+                        Context.Constructions.Remove(constr);
+                    }
                 });
             }
         }

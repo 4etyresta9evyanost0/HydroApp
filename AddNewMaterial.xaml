@@ -3,10 +3,54 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:HydroApp"
         mc:Ignorable="d"
-        Title="AddNewMaterial" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Добавление материалов" ResizeMode="NoResize" 
+        d:DesignHeight="700" d:DesignWidth="450" 
+        MaxHeight="700" MaxWidth="450"
+        >
+    <DockPanel>
+        <WrapPanel
+            DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="10">
+            <Button IsDefault="True" Click="Accept_Click" MinWidth="60" Margin="0,0,10,0">OK</Button>
+            <Button IsCancel="True" MinWidth="60">Отмена</Button>
+        </WrapPanel>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto">
+        <ItemsControl x:Name="_addMaterialsListBox" DockPanel.Dock="Top">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="#777" BorderThickness="0,1,0,1" Margin="0,2,0,2">
+                        <StackPanel
+                            Orientation="Horizontal"
+                            Background="#CCC">
+                                <CheckBox Margin="0,7,5,0" x:Name="chk"/>
+                                <StackPanel>
+                                    <TextBlock FontSize="19">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0} ({1})">
+
+                                            <Binding Path="Name"/>
+                                            <Binding Path="Type"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                                <TextBlock FontSize="16" Foreground="#666">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}[ID{2}] Всего: {0} ({1})">
+                                            <Binding Path="Amount"/>
+                                            <Binding Path="Unit"/>
+                                            <Binding Path="Id"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+                            <xctk:DoubleUpDown Margin="14" MinWidth="80" Minimum="0" Value="0" DefaultValue="0"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
 </Window>

@@ -9,7 +9,7 @@ public partial class MaterialsForDetail
 
     public int IdMaterial { get; set; }
 
-    public int MaterialsAmount { get; set; }
+    public double MaterialsAmount { get; set; }
 
     public virtual Detail IdDetailNavigation { get; set; } = null!;
 

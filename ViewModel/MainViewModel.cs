@@ -502,32 +502,6 @@ namespace HydroApp
             LoadingTasks.Add(res);
             await res;
             LoadingTasks.Remove(res);
-
-            // check connections
-            //string[] mainTables = new string[]{
-            //    "CommissionDetails",
-            //    "Employees",
-            //    "Workshops",
-            //    "Foremen",
-            //    "Designers",
-            //    "Constructions",
-            //    "Productions",
-            //    "Materials",
-            //    "Clients",
-            //    "Commissions",
-            //    "Suppliers",
-            //    "Supplies",
-            //    "SupplyDetails",
-            //    "Details",
-            //    "DetailsForProductions",
-            //    "Batch",
-            //    "MaterialsForDetails"
-            //};
-            //string[] userTables = new string[]{
-            //    "Users",
-            //    "User_Messages",
-            //    "User_Messages_Content"
-            //};
             if (res.Result == null)
             {
                 Settings.Default.MainDbConnectionString = MainConnection.ConnectionString;

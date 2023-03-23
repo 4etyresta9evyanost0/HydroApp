@@ -11,7 +11,7 @@ public partial class Material
 
     public string Type { get; set; } = null!;
 
-    public long Amount { get; set; }
+    public double Amount { get; set; }
 
     public string Unit { get; set; } = null!;
 

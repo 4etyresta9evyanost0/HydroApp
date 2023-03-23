@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HydroApp;
 
@@ -24,4 +25,10 @@ public partial class Employee
     public virtual Designer? Designer { get; set; }
 
     public virtual Foreman? Foreman { get; set; }
+
+    public string FIO { get => Firstname.First() + ". " + (Patronym != null || Patronym != "" ? Patronym.First() + ". " : "") + Surname; }
+
+    public string FullInfo { get => $"{Id}: {FIO}"; }
+
+    public override string ToString() => FullInfo;
 }
