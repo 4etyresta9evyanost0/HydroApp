@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <Folder Include="Converters\" />
-    <Folder Include="Frames\" />
     <Folder Include="Resources\" />
     <Folder Include="Themes\" />
   </ItemGroup>

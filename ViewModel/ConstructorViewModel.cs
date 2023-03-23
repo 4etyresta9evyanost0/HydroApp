@@ -32,8 +32,6 @@ namespace HydroApp
                 OnPropertyChanged(nameof(ProductDeveloperTb));
             }
         }
-
-
         ComboBox _detailDeveloperTb;
         public ComboBox DetailDeveloperTb
         {
@@ -44,7 +42,6 @@ namespace HydroApp
                 OnPropertyChanged(nameof(DetailDeveloperTb));
             }
         }
-
 
         public ListBox DesignerLb{
             get => _designerLb;
@@ -177,7 +174,6 @@ namespace HydroApp
 
             Context.Productions.Load();
             Context.DetailsForProductions.Load();
-          
 
             Designers = Context.Designers.Local.ToObservableCollection();
             Designers.CollectionChanged += (x, ev) => OnPropertyChanged(nameof(Designers));
@@ -215,7 +211,7 @@ namespace HydroApp
         {
             get => _updateCommand ??= new RelayCommand(obj =>
             {
-                
+                Init();
             });
         }
 
@@ -514,24 +510,5 @@ namespace HydroApp
             }
         }
         #endregion
-    }
-
-    public class CollectionToIEnumerableObject : IValueConverter
-    {
-        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is IEnumerable en)
-            {
-                var b = en.Cast<object>();
-                return new ObservableCollection<object>(b);
-            }
-
-            return null;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

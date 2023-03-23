@@ -1,13 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media.Media3D;
 
 namespace HydroApp
@@ -19,6 +22,8 @@ namespace HydroApp
         HydropressUserDbContext _userDb;
 
         ConstructorViewModel constrVm;
+        SupplyViewModel supplyVm;
+        CommissionViewModel commissVm;
 
         List<string> _mainDBTables = new List<string> {
             "CommissionDetails",
@@ -81,6 +86,28 @@ namespace HydroApp
                 OnPropertyChanged(nameof(ConstrVm));
             }
         }
+
+
+        public SupplyViewModel SupplyVm
+        {
+            get => supplyVm;
+            set
+            {
+                supplyVm = value;
+                OnPropertyChanged(nameof(SupplyVm));
+            }
+        }
+
+        public CommissionViewModel CommissVm
+        {
+            get => commissVm;
+            set
+            {
+                commissVm = value;
+                OnPropertyChanged(nameof(CommissVm));
+            }
+        }
+
         #endregion
 
 
@@ -130,9 +157,32 @@ namespace HydroApp
             MainDb = new HydropressDbContext(Settings.Default.MainDbConnectionString);
             UserDb = new HydropressUserDbContext(Settings.Default.UserDbConnectionString);
             constrVm = new ConstructorViewModel(_mainDb);
+            supplyVm = new SupplyViewModel(_mainDb);
+            commissVm = new CommissionViewModel(_mainDb);
+
+
             _dbs = new DbContext[] { _mainDb, _userDb };
             System.Windows.Application.Current.MainWindow.Closing += DisposeOfContexts;
 
+        }
+    }
+
+    public class CollectionToIEnumerableObject : IValueConverter
+    {
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is IEnumerable en)
+            {
+                var b = en.Cast<object>();
+                return new ObservableCollection<object>(b);
+            }
+
+            return null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

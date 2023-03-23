@@ -153,8 +153,11 @@ namespace HydroApp
         Page authPage;
         Page serverPage;
         Page adminPage;
-        Page commonPage;
+
         Page constructorPage;
+        Page supplyPage;
+        Page commissionPage;
+        Page commonPage;
 
         public Page AdminPage
         {
@@ -183,6 +186,25 @@ namespace HydroApp
             {
                 constructorPage = value;
                 OnPropertyChanged(nameof(ConstructorPage));
+            }
+        }
+
+        public Page SupplyPage
+        {
+            get=> supplyPage;
+            set
+            {
+                supplyPage = value;
+                OnPropertyChanged(nameof(SupplyPage));
+            }
+        }
+        public Page CommissionPage
+        {
+            get => commissionPage;
+            set
+            {
+                commissionPage = value;
+                OnPropertyChanged(nameof(CommissionPage));
             }
         }
 
@@ -290,6 +312,11 @@ namespace HydroApp
             adminPage = new AdminPage();
             commonPage = new CommonPage();
             constructorPage = new ConstructorPage(MainContext);
+
+            supplyPage = new SupplyPage();
+            commissionPage = new CommissionPage();
+
+
             pages.Add(serverPage);
             pages.Add(authPage);
             pages.Add(mainPage);

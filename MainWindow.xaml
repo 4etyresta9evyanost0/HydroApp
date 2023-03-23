@@ -126,7 +126,13 @@
                         <Button Content="Администратор" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame }"
                                 CommandParameter="{Binding AdminPage}"/>
-                        <Button Content="Заказ" VerticalAlignment="Bottom"
+                        <Button Content="Заказы"
+                                Command="{Binding ChangeFrame}"
+                                CommandParameter="{Binding CommissionPage}"/>
+                        <Button Content="Поставки"
+                                Command="{Binding ChangeFrame}"
+                                CommandParameter="{Binding SupplyPage}"/>
+                        <Button Content="Изготовление деталей" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
                                 CommandParameter="{Binding MainPage}"/>
                         <Button Content="Конструктор" VerticalAlignment="Bottom"

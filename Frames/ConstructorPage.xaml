@@ -12,7 +12,6 @@
       Title="ConstructorPage" Background="White" 
       DataContext="{DynamicResource tableVm}">
     <Page.Resources>
-        <local:DataPanelViewModel x:Name="dataPanelVm" x:Key="dataPanelVm"></local:DataPanelViewModel>
         <local:CollectionToIEnumerableObject x:Key="CollectionToIEnumerableObject"></local:CollectionToIEnumerableObject>
         <local:ZeroEnumeratorToOneEnumerator x:Key="ZeroEnumeratorToOneEnumerator"></local:ZeroEnumeratorToOneEnumerator>
     </Page.Resources>
@@ -204,7 +203,7 @@
                             <ListBox Grid.Column="1" Margin="5,25,5,5" x:Name="_allDetails"
                                 SelectedItem="{Binding SelectedDetail}" 
                                 SelectedIndex="{Binding SelectedValueDetail}"
-                                ItemsSource="{Binding Details, UpdateSourceTrigger=PropertyChanged}" 
+                                ItemsSource="{Binding Details, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}" 
                                 >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -240,8 +239,8 @@
                             <Label Grid.Column="1" Grid.Row="1"  Content="Материалы:" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                             <ListBox Grid.Column="1" Grid.Row="1" Margin="5,25,5,5"
                                     x:Name="_allMaterials"
-                                    DataContext="{Binding SelectedDetail, UpdateSourceTrigger=PropertyChanged}"
-                                    ItemsSource="{Binding MaterialsForDetails, UpdateSourceTrigger=PropertyChanged}"
+                                    DataContext="{Binding SelectedDetail, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}"
+                                    ItemsSource="{Binding MaterialsForDetails, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}"
                                 >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -345,7 +344,7 @@
                             <ListBox Grid.Column="1" Margin="5,25,5,5" x:Name="_allProducts"
                                 SelectedItem="{Binding SelectedProduct}" 
                                 SelectedIndex="{Binding SelectedValueProduct}"
-                                ItemsSource="{Binding Products, UpdateSourceTrigger=PropertyChanged}" >
+                                ItemsSource="{Binding Products, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}" >
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel>
@@ -376,8 +375,8 @@
                             <Label Grid.Column="1" Grid.Row="1"  Content="Детали:" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                             <ListBox x:Name="_allDetailsForProduction"
                                 Grid.Column="1" Grid.Row="1" Margin="5,25,5,5"
-                                    DataContext="{Binding SelectedProduct, UpdateSourceTrigger=PropertyChanged}"
-                                    ItemsSource="{Binding DetailsForProductions, UpdateSourceTrigger=PropertyChanged}">
+                                    DataContext="{Binding SelectedProduct, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}"
+                                    ItemsSource="{Binding DetailsForProductions, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel>
