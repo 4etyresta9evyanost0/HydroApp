@@ -313,8 +313,8 @@ namespace HydroApp
             commonPage = new CommonPage();
             constructorPage = new ConstructorPage(MainContext);
 
-            supplyPage = new SupplyPage();
-            commissionPage = new CommissionPage();
+            supplyPage = new SupplyPage(MainContext);
+            commissionPage = new CommissionPage(MainContext);
 
 
             pages.Add(serverPage);

@@ -21,16 +21,62 @@ namespace HydroApp
     public partial class CommissionPage : Page
     {
         TableViewModel TableViewModel { get => (TableViewModel)Application.Current.Resources["tableVm"]; }
-        CommissionViewModel SupplyVm { get => TableViewModel.CommissVm; }
-        public CommissionPage()
+        CommissionViewModel CommissVm { get => TableViewModel.CommissVm; }
+        public HydropressDbContext MainContext;
+        public CommissionPage(HydropressDbContext context)
         {
+            MainContext = context;
             InitializeComponent();
             Loaded += Page_Loaded;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            SupplyVm.Init();
+            CommissVm.Init();
+            Binding b = new Binding();
+            b.Source = CommissVm;
+            b.Path = new PropertyPath("Clients");
+            _clientCb.SetBinding(ComboBox.ItemsSourceProperty, b);
         }
+
+        private void DeleteConstructionForCommission(object sender, RoutedEventArgs e)
+        {
+            CommissVm.SelectedItem.CommissionDetails.Remove(CommissVm.SelectedCommissionDetail);
+            RefreshConstructions();
+        }
+
+        private void OpenAddingConstructionForCommissionMenu(object sender, RoutedEventArgs e)
+        {
+            var window = new AddNewConstruction(MainContext, (IEnumerable<CommissionDetail>)_MtMLb.ItemsSource);
+            if (window.ShowDialog() == true)
+            {
+                var res = window.Result;
+
+                for (int i = 0; i < res.Count; i++)
+                {
+                    if (res[i].Item1 && res[i].Item3 > 0)
+                    {
+                        var cd = new CommissionDetail
+                        {
+                            IdCommission = CommissVm.SelectedItem.Id,
+                            IdConstruction = res[i].Item2.Id,
+                            ConstructionsAmount = res[i].Item3
+                        };
+                        CommissVm.SelectedItem.CommissionDetails.Add(cd);
+                    }
+                }
+                CommissVm.Init();
+                RefreshConstructions();
+            }
+        }
+
+        void RefreshConstructions()
+        {
+            var temp = CommissVm.SelectedIndex;
+            CommissVm.SelectedIndex = 0;
+            _MtMLb.Items.Refresh();
+            CommissVm.SelectedIndex = temp;
+        }
+
     }
 }

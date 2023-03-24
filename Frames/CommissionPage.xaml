@@ -12,9 +12,15 @@
     <Page.Resources>
         <local:ZeroEnumeratorToOneEnumerator x:Key="ZeroEnumeratorToOneEnumerator"></local:ZeroEnumeratorToOneEnumerator>
     </Page.Resources>
-    <DockPanel DataContext="{Binding SupplyVm}">
+    <DockPanel DataContext="{Binding CommissVm}">
         <local:DataPanel DockPanel.Dock="Bottom"
-                         />
+                         MaxValue="{Binding Commissions.Count, FallbackValue=0}" 
+                        SelectedValue="{Binding SelectedIndex, Mode=TwoWay,
+                            Converter={StaticResource ZeroEnumeratorToOneEnumerator}}"
+                        AddCommand="{Binding AddCommand}"
+                        SaveCommand="{Binding SaveCommand}"
+                        RemoveCommand="{Binding RemoveCommand}"
+                        UpdateCommand="{Binding UpdateCommand}"/>
         <Grid Background="#E5E5E5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -24,22 +30,25 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.RowSpan="2">
+            <StackPanel Grid.RowSpan="2" DataContext="{Binding SelectedItem}">
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                     <Label Padding="2" Width="100" Content="ID:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
+                    <TextBox IsReadOnly="True" Width="150" Text="{Binding Id}"></TextBox>
                 </StackPanel>
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="Поставщик:"></Label>
-                    <ComboBox Width="150"></ComboBox>
+                    <Label Padding="2" Width="100" Content="Заказчик:"></Label>
+                    <ComboBox Width="150" x:Name="_clientCb"
+                            SelectedItem="{Binding ClientNavigation}"
+                            SelectedValuePath="Id"
+                            DisplayMemberPath="Name"></ComboBox>
                 </StackPanel>
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                     <Label Padding="2" Width="100" Content="Дата заказа:"></Label>
-                    <DatePicker  Width="150"></DatePicker>
+                    <DatePicker  Width="150" FirstDayOfWeek="Monday" SelectedDate="{Binding CommissionDate}" DisplayDateEnd="{Binding ExecutionDate}"></DatePicker>
                 </StackPanel>
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                     <Label Padding="2" Width="100" Content="Дата исполнения:"></Label>
-                    <DatePicker  Width="150"></DatePicker>
+                    <DatePicker  Width="150" FirstDayOfWeek="Monday" SelectedDate="{Binding ExecutionDate}" DisplayDateStart="{Binding CommissionDate}"></DatePicker>
                 </StackPanel>
                 <!--Заказчик
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
@@ -67,13 +76,98 @@
                     <TextBox IsReadOnly="True" Width="150"></TextBox>
                 </StackPanel>-->
             </StackPanel>
-            <Label Grid.Column="1" Content="Все поставщики:"/>
-            <ListBox Grid.Column="1" Margin="5,25,5,5">
-
+            <Label Grid.Column="1" Content="Все заказы:"/>
+            <ListBox Grid.Column="1" Margin="5,25,5,5"
+                     SelectedItem="{Binding SelectedItem}" 
+                    SelectedIndex="{Binding SelectedIndex}"
+                    ItemsSource="{Binding Commissions, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:Commission}">
+                        <StackPanel>
+                            <TextBlock FontSize="19">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}ID{0}: от {1:dd}.{1:MM}.{1:yyyy} до {2:dd}.{2:MM}.{2:yyyy} ">
+                                        <Binding Path="Id"/>
+                                        <Binding Path="CommissionDate"/>
+                                        <Binding Path="ExecutionDate"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock x:Name="tblock" FontSize="16" Foreground="#666">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}Заказчик: {0}">
+                                        <Binding Path="ClientNavigation.Name"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
             </ListBox>
-            <Label Grid.Column="1" Grid.Row="1" Content="Материалы для поставки:"/>
-            <ListBox Grid.Column="1" Grid.Row="1" Margin="5,25,5,5">
-
+            <Label Grid.Column="1" Grid.Row="1" Content="Продукты (разработки) для поставки:"/>
+            <ListBox x:Name="_MtMLb" Grid.Column="1" Grid.Row="1" Margin="5,25,5,5"
+                     DataContext="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}"
+                    ItemsSource="{Binding CommissionDetails, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:Construction}">
+                        <StackPanel>
+                            <StackPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Удалить" 
+                                            Click="DeleteConstructionForCommission"
+                                            CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                                </ContextMenu>
+                            </StackPanel.ContextMenu>
+                            <TextBlock FontSize="19">
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}{0} - {1} р. ({2} шт.)">
+                                        <Binding Path="Name"/>
+                                        <Binding Path="Price"/>
+                                        <Binding Path="Amount"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock x:Name="tblock" FontSize="16" Foreground="#666">
+                                <TextBlock.Triggers>
+                                    <DataTrigger Binding="{Binding Production}" Value="{x:Null}">
+                                        <Setter TargetName="tblock" Property="TextBlock.Text">
+                                            <Setter.Value>
+                                                <MultiBinding StringFormat="{}[ID{0}]:{1}; {2}w {3}h {4}l">
+                                                    <Binding Path="Id"/>
+                                                    <Binding Path="Detail.Purpose"/>
+                                                    <Binding Path="Detail.Width"/>
+                                                    <Binding Path="Detail.Height"/>
+                                                    <Binding Path="Detail.Length"/>
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Detail}" Value="{x:Null}">
+                                        <Setter TargetName="tblock"  Property="TextBlock.Text">
+                                            <Setter.Value>
+                                                <MultiBinding StringFormat="{}[ID{0}] {2} ({1})">
+                                                    <Binding Path="Id"/>
+                                                    <Binding Path="Production.Type"/>
+                                                    <Binding Path="Production.BrandName"/>
+                                                </MultiBinding>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </TextBlock.Triggers>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{}[ID{0}]">
+                                        <Binding Path="Id"/>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ContextMenu>
+                    <ContextMenu x:Name="_ContextMenuDetailsForMaterials">
+                        <MenuItem Header="Добавить продукт (разработку)" Click="OpenAddingConstructionForCommissionMenu"/>
+                    </ContextMenu>
+                </ListBox.ContextMenu>
             </ListBox>
         </Grid>
     </DockPanel>

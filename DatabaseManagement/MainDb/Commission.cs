@@ -16,4 +16,10 @@ public partial class Commission
     public virtual Client ClientNavigation { get; set; } = null!;
 
     public virtual ICollection<CommissionDetail> CommissionDetails { get; } = new List<CommissionDetail>();
+
+
+    public bool IsExecutionOver
+    {
+        get => ExecutionDate.HasValue ? true : ExecutionDate > DateTime.Today;
+    }
 }

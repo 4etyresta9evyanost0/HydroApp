@@ -21,8 +21,10 @@ namespace HydroApp
     {
         TableViewModel TableViewModel { get => (TableViewModel)Application.Current.Resources["tableVm"]; }
         SupplyViewModel SupplyVm { get => TableViewModel.SupplyVm; }
-        public SupplyPage()
+        public HydropressDbContext MainContext;
+        public SupplyPage(HydropressDbContext context)
         {
+            MainContext = context;
             InitializeComponent();
             Loaded += Page_Loaded;
         }
