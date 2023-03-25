@@ -24,6 +24,7 @@ namespace HydroApp
         ConstructorViewModel constrVm;
         SupplyViewModel supplyVm;
         CommissionViewModel commissVm;
+        BatchViewModel batchVm;
 
         List<string> _mainDBTables = new List<string> {
             "CommissionDetails",
@@ -86,8 +87,6 @@ namespace HydroApp
                 OnPropertyChanged(nameof(ConstrVm));
             }
         }
-
-
         public SupplyViewModel SupplyVm
         {
             get => supplyVm;
@@ -97,7 +96,6 @@ namespace HydroApp
                 OnPropertyChanged(nameof(SupplyVm));
             }
         }
-
         public CommissionViewModel CommissVm
         {
             get => commissVm;
@@ -107,6 +105,16 @@ namespace HydroApp
                 OnPropertyChanged(nameof(CommissVm));
             }
         }
+        public BatchViewModel BatchVm
+        {
+            get => batchVm;
+            set
+            {
+                batchVm = value;
+                OnPropertyChanged(nameof(BatchVm));
+            }
+        }
+
 
         #endregion
 
@@ -159,6 +167,7 @@ namespace HydroApp
             constrVm = new ConstructorViewModel(_mainDb);
             supplyVm = new SupplyViewModel(_mainDb);
             commissVm = new CommissionViewModel(_mainDb);
+            batchVm = new BatchViewModel(_mainDb);
 
 
             _dbs = new DbContext[] { _mainDb, _userDb };

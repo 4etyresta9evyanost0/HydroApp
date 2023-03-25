@@ -18,16 +18,6 @@ namespace HydroApp
     {
         public HydropressDbContext Context { get; set; }
 
-        int _selectedIndex;
-        public int SelectedIndex
-        {
-            get => _selectedIndex;
-            set
-            {
-                _selectedIndex = value;
-                OnPropertyChanged(nameof(SelectedIndex));
-            }
-        }
 
         ObservableCollection<Commission> _commissions;
         public ObservableCollection<Commission> Commissions
@@ -59,6 +49,17 @@ namespace HydroApp
             {
                 _commissionDetails = value;
                 OnPropertyChanged(nameof(CommissionDetails));
+            }
+        }
+
+        int _selectedIndex;
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set
+            {
+                _selectedIndex = value;
+                OnPropertyChanged(nameof(SelectedIndex));
             }
         }
 

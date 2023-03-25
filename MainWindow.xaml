@@ -134,7 +134,7 @@
                                 CommandParameter="{Binding SupplyPage}"/>
                         <Button Content="Изготовление деталей" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
-                                CommandParameter="{Binding MainPage}"/>
+                                CommandParameter="{Binding BatchPage}"/>
                         <Button Content="Конструктор" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
                                 CommandParameter="{Binding ConstructorPage}"/>
@@ -144,9 +144,9 @@
                         <Button Content="Меню" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
                                 CommandParameter="{Binding MainPage}"/>
-                        <Button Content="Мессенджер" VerticalAlignment="Bottom"
+                        <!--<Button Content="Мессенджер" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
-                                CommandParameter="{Binding MainPage}"/>
+                                CommandParameter="{Binding MainPage}"/>-->
                     </StackPanel>
                 </Border>
                 <Frame NavigationUIVisibility="Hidden" Background="DarkGray" 

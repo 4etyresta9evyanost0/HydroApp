@@ -140,10 +140,24 @@ namespace HydroApp
         {
             get => saveChanges ?? (saveChanges = new RelayCommand(obj =>
             {
-                
-                SqlDataAdapter.Update(DataSet);
-                DataSet.Clear();
-                SqlDataAdapter.Fill(DataSet);
+                try
+                {
+                    if (DataSet != null)
+                    {
+                        SqlDataAdapter.Update(DataSet);
+                        DataSet.Clear();
+                        SqlDataAdapter.Fill(DataSet);
+                        MessageBox.Show("База данных обновлена", "Внимание");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Выберите базу данных и таблицу", "Ошибка");
+                    }
+                }
+                catch (Exception e) 
+                {
+                    MessageBox.Show(e.Message, "Ошибка");
+                }
             }));
         }
 

@@ -157,6 +157,7 @@ namespace HydroApp
         Page constructorPage;
         Page supplyPage;
         Page commissionPage;
+        Page batchPage;
         Page commonPage;
 
         public Page AdminPage
@@ -207,6 +208,17 @@ namespace HydroApp
                 OnPropertyChanged(nameof(CommissionPage));
             }
         }
+
+        public Page BatchPage
+        {
+            get => batchPage;
+            set
+            {
+                batchPage = value;
+                OnPropertyChanged(nameof(BatchPage));
+            }
+        }
+
 
         ServerListStatus serverListStatus = ServerListStatus.Updating;
         //ObservableCollection<(Server, Database[])> servers;
@@ -315,6 +327,7 @@ namespace HydroApp
 
             supplyPage = new SupplyPage(MainContext);
             commissionPage = new CommissionPage(MainContext);
+            batchPage = new BatchPage(MainContext);
 
 
             pages.Add(serverPage);

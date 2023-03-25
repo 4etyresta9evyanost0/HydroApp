@@ -45,8 +45,5 @@
         </ComboBox>
         <Button Content="Сохранить" HorizontalAlignment="Left" Margin="498,0,0,0" VerticalAlignment="Center" Width="110"
                 Command="{Binding SaveChanges}"/>
-        <Button Content="Добавить" HorizontalAlignment="Left" Margin="383,0,0,0" VerticalAlignment="Center" Width="110"
-            Command="{Binding }"/>
-
     </Grid>
 </Page>
