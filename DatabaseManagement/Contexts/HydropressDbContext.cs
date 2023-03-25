@@ -94,7 +94,6 @@ namespace HydroApp
             {
                 entity.HasKey(e => e.Id).HasName("PK_CommisionId");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
                 entity.Property(e => e.CommissionDate)
                     .HasDefaultValueSql("(getdate())")
                     .HasColumnType("date");
@@ -243,7 +242,6 @@ namespace HydroApp
             {
                 entity.HasKey(e => e.Id).HasName("PK_SupplierId");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
                 entity.Property(e => e.Adress).HasMaxLength(192);
                 entity.Property(e => e.Inn).HasColumnName("INN");
                 entity.Property(e => e.Kpp).HasColumnName("KPP");
@@ -255,7 +253,6 @@ namespace HydroApp
             {
                 entity.HasKey(e => e.Id).HasName("PK_SupplyId");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
                 entity.Property(e => e.CommissionDate)
                     .HasDefaultValueSql("(getdate())")
                     .HasColumnType("date");

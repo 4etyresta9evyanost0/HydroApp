@@ -102,6 +102,11 @@ namespace HydroApp
 
         public void Init()
         {
+            
+            Context.Constructions.Load(); //
+            Context.Productions.Load(); //
+            Context.Details.Load(); // Для отображения в MtMLb
+
             Context.Commissions.Load();
             Context.Clients.Load();
             Context.CommissionDetails.Load();

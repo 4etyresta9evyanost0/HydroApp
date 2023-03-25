@@ -36,6 +36,7 @@ namespace HydroApp
             Binding b = new Binding();
             b.Source = CommissVm;
             b.Path = new PropertyPath("Clients");
+            b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             _clientCb.SetBinding(ComboBox.ItemsSourceProperty, b);
         }
 

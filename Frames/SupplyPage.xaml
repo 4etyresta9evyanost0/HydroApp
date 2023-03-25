@@ -14,7 +14,13 @@
     </Page.Resources>
     <DockPanel DataContext="{Binding SupplyVm}">
         <local:DataPanel DockPanel.Dock="Bottom"
-                         />
+                         MaxValue="{Binding Supplies.Count, FallbackValue=0}" 
+                        SelectedValue="{Binding SelectedIndex, Mode=TwoWay,
+                            Converter={StaticResource ZeroEnumeratorToOneEnumerator}}"
+                        AddCommand="{Binding AddCommand}"
+                        SaveCommand="{Binding SaveCommand}"
+                        RemoveCommand="{Binding RemoveCommand}"
+                        UpdateCommand="{Binding UpdateCommand}"/>
         <Grid Background="#E5E5E5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -24,75 +30,49 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.RowSpan="2">
+            <StackPanel Grid.RowSpan="2" DataContext="{Binding SelectedItem}">
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                     <Label Padding="2" Width="140" Content="ID:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
+                    <TextBox Background="#EEE" IsReadOnly="True" Width="150" Text="{Binding Id}"></TextBox>
                 </StackPanel>
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                     <Label Padding="2" Width="140" Content="Поставщик:"></Label>
-                    <ComboBox Width="150"></ComboBox>
+                    <ComboBox Width="150"
+                              x:Name="_supplierCb"
+                            SelectedItem="{Binding SupplierNavigation}"
+                            SelectedValuePath="Id"
+                            DisplayMemberPath="Name"></ComboBox>
                 </StackPanel>
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                     <Label Padding="2" Width="140" Content="Дата заказа материалов:"></Label>
-                    <DatePicker  Width="150" FirstDayOfWeek="Monday"></DatePicker>
+                    <DatePicker  Width="150" FirstDayOfWeek="Monday" SelectedDate="{Binding CommissionDate}" DisplayDateEnd="{Binding SupplyDate}"></DatePicker>
                 </StackPanel>
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                     <Label Padding="2" Width="140" Content="Дата поставки:"></Label>
-                    <DatePicker  Width="150" FirstDayOfWeek="Monday"></DatePicker>
+                    <DatePicker  Width="150" FirstDayOfWeek="Monday" SelectedDate="{Binding SupplyDate}" DisplayDateStart="{Binding CommissionDate}"></DatePicker>
                 </StackPanel>
-                <!--Заказчик
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="ID:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="Наименование:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="Юр. адрес:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="ОГРН:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="ИНН:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="КПП:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>-->
             </StackPanel>
             <Label Grid.Column="1" Content="Все поставки материалов:"/>
             <ListBox Grid.Column="1" Margin="5,25,5,5"
                      SelectedItem="{Binding SelectedItem}"
                      SelectedIndex="{Binding SelectedIndex}"
-                     ItemsSource="{Binding Supplies, UpdateSourceTrigger=PropertyChanged,IsAsync=True, Delay=50}"
-                     >
+                     ItemsSource="{Binding Supplies, UpdateSourceTrigger=PropertyChanged,IsAsync=True, Delay=50}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="{x:Type local:Supply}">
                         <StackPanel>
                             <TextBlock FontSize="19">
                                 <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}ID: {0} - {1}">
-                                        <Binding Path="IdNavigation.Id" UpdateSourceTrigger="PropertyChanged" >
-                                        </Binding>
-                                        <Binding Path="IdNavigation.Name" UpdateSourceTrigger="PropertyChanged">
-                                        </Binding>
+                                    <MultiBinding StringFormat="{}ID{0}: от {1:dd}.{1:MM}.{1:yyyy} до {2:dd}.{2:MM}.{2:yyyy} ">
+                                        <Binding Path="Id"/>
+                                        <Binding Path="CommissionDate"/>
+                                        <Binding Path="SupplyDate"/>
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
                             <TextBlock FontSize="16" Foreground="#666">
                                 <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}({0}) {1}">
-                                        <Binding Path="BrandName" UpdateSourceTrigger="PropertyChanged">
-                                        </Binding>
-                                        <Binding Path="Type" UpdateSourceTrigger="PropertyChanged">
-                                        </Binding>
+                                    <MultiBinding StringFormat="{}Заказчик: {0}">
+                                        <Binding Path="SupplierNavigation.Name"/>
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
@@ -101,25 +81,27 @@
                 </ListBox.ItemTemplate>
             </ListBox>
             <Label Grid.Column="1" Grid.Row="1" Content="Материалы для поставки:"/>
-            <ListBox Grid.Column="1" Grid.Row="1" Margin="5,25,5,5"
-                     DataContext="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}"
-                     ItemsSource="{Binding SupplyDetails, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}">
+            <ListBox x:Name="_MtMLb" Grid.Column="1" Grid.Row="1" Margin="5,25,5,5"
+                     SelectedItem="{Binding SelectedSupplyDetail, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}"
+                     ItemsSource="{Binding SelectedItem.SupplyDetails, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                             <StackPanel.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Удалить" 
-                                                              
-                                                              CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
+                                              Click="DeleteMaterailForDetail"
+                                              CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Parent}"/>
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
                             <TextBlock FontSize="19">
                                 <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0}: {1} шт.">
-                                        <Binding Path="IdDetailNavigation.IdNavigation.Name" UpdateSourceTrigger="PropertyChanged">
+                                    <MultiBinding StringFormat="{}{0}: {1} {2}">
+                                        <Binding Path="IdMaterialNavigation.Name" UpdateSourceTrigger="PropertyChanged">
                                         </Binding>
-                                        <Binding Path="DetailsAmount" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding Path="MaterialAmount" UpdateSourceTrigger="PropertyChanged">
+                                        </Binding>
+                                        <Binding Path="IdMaterialNavigation.Unit" UpdateSourceTrigger="PropertyChanged">
                                         </Binding>
                                     </MultiBinding>
                                 </TextBlock.Text>
@@ -129,7 +111,7 @@
                 </ListBox.ItemTemplate>
                 <ListBox.ContextMenu>
                     <ContextMenu x:Name="_ContextMenuDetailsForMaterials">
-                        <MenuItem Header="Добавить материал" />
+                        <MenuItem Header="Добавить материал" Click="OpenAddingMaterialsMenu"/>
                     </ContextMenu>
                 </ListBox.ContextMenu>
             </ListBox>

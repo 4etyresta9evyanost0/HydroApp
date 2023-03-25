@@ -33,7 +33,7 @@
             <StackPanel Grid.RowSpan="2" DataContext="{Binding SelectedItem}">
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                     <Label Padding="2" Width="100" Content="ID:"></Label>
-                    <TextBox IsReadOnly="True" Width="150" Text="{Binding Id}"></TextBox>
+                    <TextBox Background="#EEE" IsReadOnly="True" Width="150" Text="{Binding Id}"></TextBox>
                 </StackPanel>
                 <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
                     <Label Padding="2" Width="100" Content="Заказчик:"></Label>
@@ -50,31 +50,6 @@
                     <Label Padding="2" Width="100" Content="Дата исполнения:"></Label>
                     <DatePicker  Width="150" FirstDayOfWeek="Monday" SelectedDate="{Binding ExecutionDate}" DisplayDateStart="{Binding CommissionDate}"></DatePicker>
                 </StackPanel>
-                <!--Заказчик
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="ID:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="Наименование:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="Юр. адрес:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="ОГРН:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="ИНН:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>
-                <StackPanel  Orientation="Horizontal" Margin="5" HorizontalAlignment="Left">
-                    <Label Padding="2" Width="100" Content="КПП:"></Label>
-                    <TextBox IsReadOnly="True" Width="150"></TextBox>
-                </StackPanel>-->
             </StackPanel>
             <Label Grid.Column="1" Content="Все заказы:"/>
             <ListBox Grid.Column="1" Margin="5,25,5,5"
@@ -106,12 +81,25 @@
             </ListBox>
             <Label Grid.Column="1" Grid.Row="1" Content="Продукты (разработки) для поставки:"/>
             <ListBox x:Name="_MtMLb" Grid.Column="1" Grid.Row="1" Margin="5,25,5,5"
-                     DataContext="{Binding SelectedItem, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}"
-                    ItemsSource="{Binding CommissionDetails, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}">
+                     SelectedItem="{Binding SelectedCommissionDetail, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}"
+                    ItemsSource="{Binding SelectedItem.CommissionDetails, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Delay=50}">
                 <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type local:Construction}">
-                        <StackPanel>
-                            <StackPanel.ContextMenu>
+                    <DataTemplate DataType="{x:Type local:CommissionDetail}">
+                        <Border Padding="5" CornerRadius="14">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IdConstructionNavigation.Detail}" Value="{x:Null}">
+                                            <Setter Property="Background" Value="#ded"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IdConstructionNavigation.Production}" Value="{x:Null}">
+                                            <Setter Property="Background" Value="#ede"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <StackPanel>
+                                <StackPanel.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Удалить" 
                                             Click="DeleteConstructionForCommission"
@@ -120,47 +108,52 @@
                             </StackPanel.ContextMenu>
                             <TextBlock FontSize="19">
                                 <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0} - {1} р. ({2} шт.)">
-                                        <Binding Path="Name"/>
-                                        <Binding Path="Price"/>
-                                        <Binding Path="Amount"/>
+                                    <MultiBinding StringFormat="{}{0} - {1:F2} р. ({2} шт.)">
+                                        <Binding Path="IdConstructionNavigation.Name"/>
+                                        <Binding Path="IdConstructionNavigation.Price"/>
+                                        <Binding Path="ConstructionsAmount"/>
                                     </MultiBinding>
                                 </TextBlock.Text>
                             </TextBlock>
                             <TextBlock x:Name="tblock" FontSize="16" Foreground="#666">
-                                <TextBlock.Triggers>
-                                    <DataTrigger Binding="{Binding Production}" Value="{x:Null}">
-                                        <Setter TargetName="tblock" Property="TextBlock.Text">
-                                            <Setter.Value>
-                                                <MultiBinding StringFormat="{}[ID{0}]:{1}; {2}w {3}h {4}l">
-                                                    <Binding Path="Id"/>
-                                                    <Binding Path="Detail.Purpose"/>
-                                                    <Binding Path="Detail.Width"/>
-                                                    <Binding Path="Detail.Height"/>
-                                                    <Binding Path="Detail.Length"/>
-                                                </MultiBinding>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Detail}" Value="{x:Null}">
-                                        <Setter TargetName="tblock"  Property="TextBlock.Text">
-                                            <Setter.Value>
-                                                <MultiBinding StringFormat="{}[ID{0}] {2} ({1})">
-                                                    <Binding Path="Id"/>
-                                                    <Binding Path="Production.Type"/>
-                                                    <Binding Path="Production.BrandName"/>
-                                                </MultiBinding>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </DataTrigger>
-                                </TextBlock.Triggers>
-                                <TextBlock.Text>
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IdConstructionNavigation.Detail}" Value="{x:Null}">
+                                                <Setter Property="Text">
+                                                    <Setter.Value>
+                                                        <MultiBinding StringFormat="{}[ID{0}]: {2} ({1})">
+                                                            <Binding Path="IdConstructionNavigation.Id"/>
+                                                            <Binding Path="IdConstructionNavigation.Production.Type"/>
+                                                            <Binding Path="IdConstructionNavigation.Production.BrandName"/>
+                                                        </MultiBinding>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IdConstructionNavigation.Production}" Value="{x:Null}">
+                                                <Setter Property="Text">
+                                                    <Setter.Value>
+                                                        <MultiBinding StringFormat="{}[ID{0}]: {1}; {2}w {3}h {4}l">
+                                                            <Binding Path="IdConstructionNavigation.Id"/>
+                                                            <Binding Path="IdConstructionNavigation.Detail.Purpose"/>
+                                                            <Binding Path="IdConstructionNavigation.Detail.Width"/>
+                                                            <Binding Path="IdConstructionNavigation.Detail.Height"/>
+                                                            <Binding Path="IdConstructionNavigation.Detail.Length"/>
+                                                        </MultiBinding>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                                <!--<TextBlock.Text>
                                     <MultiBinding StringFormat="{}[ID{0}]">
-                                        <Binding Path="Id"/>
+                                        <Binding Path="IdConstructionNavigation.Id"/>
                                     </MultiBinding>
-                                </TextBlock.Text>
+                                </TextBlock.Text>-->
                             </TextBlock>
                         </StackPanel>
+                        </Border>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.ContextMenu>

@@ -10,11 +10,6 @@
         d:DesignHeight="700" d:DesignWidth="550" 
         MaxHeight="700" MaxWidth="550"
         Title="Добавление разработок" >
-    <Window.Resources>
-        <ResourceDictionary>
-            
-        </ResourceDictionary>
-    </Window.Resources>
     <DockPanel>
         <WrapPanel
             DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="10">
@@ -28,12 +23,24 @@
                         <Border BorderBrush="#777" BorderThickness="0,1,0,1" Margin="0,2,0,2">
                             <StackPanel
                             Orientation="Horizontal"
-                            Background="#CCC">
+                            >
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Detail}" Value="{x:Null}">
+                                                <Setter Property="Background" Value="#ded"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Production}" Value="{x:Null}">
+                                                <Setter Property="Background" Value="#ede"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
                                 <CheckBox Margin="0,7,5,0" x:Name="chk"/>
                                 <StackPanel>
                                     <TextBlock FontSize="19">
                                         <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{0} - {1} р. ({2} шт.)">
+                                            <MultiBinding StringFormat="{}{0} - {1:F2} р. ({2} шт.)">
                                                 <Binding Path="Name"/>
                                                 <Binding Path="Price"/>
                                                 <Binding Path="Amount"/>
@@ -42,12 +49,23 @@
                                     </TextBlock>
                                     <TextBlock x:Name="tblock" FontSize="16" Foreground="#666">
                                         <TextBlock.Style>
-                                            <Style>
+                                            <Style TargetType="TextBlock">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Production}" Value="{x:Null}">
-                                                        <Setter Property="TextBlock.Text">
+                                                    <DataTrigger Binding="{Binding Detail}" Value="{x:Null}">
+                                                        <Setter Property="Text">
                                                             <Setter.Value>
-                                                                <MultiBinding StringFormat="{}[ID{0}]:{1}; {2}w {3}h {4}l">
+                                                                <MultiBinding StringFormat="{}[ID{0}]: {2} ({1})" FallbackValue="bsd">
+                                                                    <Binding Path="Id"/>
+                                                                    <Binding Path="Production.Type"/>
+                                                                    <Binding Path="Production.BrandName"/>
+                                                                </MultiBinding>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Production}" Value="{x:Null}">
+                                                        <Setter Property="Text">
+                                                            <Setter.Value>
+                                                                <MultiBinding StringFormat="{}[ID{0}]: {1}; {2}w {3}h {4}l" FallbackValue="asd">
                                                                     <Binding Path="Id"/>
                                                                     <Binding Path="Detail.Purpose"/>
                                                                     <Binding Path="Detail.Width"/>
@@ -57,25 +75,14 @@
                                                             </Setter.Value>
                                                         </Setter>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Detail}" Value="{x:Null}">
-                                                        <Setter Property="TextBlock.Text">
-                                                            <Setter.Value>
-                                                                <MultiBinding StringFormat="{}[ID{0}] {2} ({1})">
-                                                                    <Binding Path="Id"/>
-                                                                    <Binding Path="Production.Type"/>
-                                                                    <Binding Path="Production.BrandName"/>
-                                                                </MultiBinding>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
-                                        <TextBlock.Text>
+                                        <!--<TextBlock.Text>
                                             <MultiBinding StringFormat="{}[ID{0}]">
                                                 <Binding Path="Id"/>
                                             </MultiBinding>
-                                        </TextBlock.Text>
+                                        </TextBlock.Text>-->
                                     </TextBlock>
                                 </StackPanel>
                                 <xctk:IntegerUpDown Margin="14" MinWidth="80" Minimum="0" Value="0" DefaultValue="0"/>

@@ -41,6 +41,27 @@ namespace HydroApp
             }
         }
 
+        ObservableCollection<Supplier> _suppliers;
+        public ObservableCollection<Supplier> Suppliers
+        {
+            get => _suppliers;
+            set
+            {
+                _suppliers = value;
+                OnPropertyChanged(nameof(Suppliers));
+            }
+        }
+        ObservableCollection<SupplyDetail> _supplyDetail;
+        public ObservableCollection<SupplyDetail> SupplyDetails
+        {
+            get => _supplyDetail;
+            set
+            {
+                _supplyDetail = value;
+                OnPropertyChanged(nameof(SupplyDetails));
+            }
+        }
+
         Supply _selectedItem;
         public Supply SelectedItem
         {
@@ -80,9 +101,21 @@ namespace HydroApp
 
         public void Init()
         {
+            Context.Materials.Load();
             Context.Suppliers.Load();
             Context.Supplies.Load();
             Context.SupplyDetails.Load();
+
+
+            Supplies = Context.Supplies.Local.ToObservableCollection();
+            Supplies.CollectionChanged += (x,e) => OnPropertyChanged(nameof(Supplies));
+
+            Suppliers = Context.Suppliers.Local.ToObservableCollection();
+            Suppliers.CollectionChanged += (x,e) => OnPropertyChanged(nameof(Suppliers));
+
+            SupplyDetails = Context.SupplyDetails.Local.ToObservableCollection();
+            SupplyDetails.CollectionChanged += (x, e) => OnPropertyChanged(nameof(SupplyDetails));
+ 
         }
 
 

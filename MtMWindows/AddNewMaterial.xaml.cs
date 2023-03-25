@@ -42,6 +42,25 @@ namespace HydroApp
             _addMaterialsListBox.ItemsSource = list.OrderBy(x => x.Type);
         }
 
+        public AddNewMaterial(HydropressDbContext context, IEnumerable<SupplyDetail> existingMaterials)
+        {
+            InitializeComponent();
+            context.Materials.Load();
+            Material[] array = new Material[context.Materials.Local.Count];
+            context.Materials.Local.ToList().CopyTo(array);
+            var list = new List<Material>(array);
+            for (int i = 0; i < list.Count; i++)
+            {
+                var item = list[i];
+                if (existingMaterials.Any(x => item.Id == x.IdMaterial))
+                {
+                    list.Remove(item);
+                    i--;
+                }
+            }
+            _addMaterialsListBox.ItemsSource = list.OrderBy(x => x.Type);
+        }
+
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;

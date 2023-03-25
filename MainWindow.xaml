@@ -144,6 +144,9 @@
                         <Button Content="Меню" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
                                 CommandParameter="{Binding MainPage}"/>
+                        <Button Content="Мессенджер" VerticalAlignment="Bottom"
+                                Command="{Binding ChangeFrame}"
+                                CommandParameter="{Binding MainPage}"/>
                     </StackPanel>
                 </Border>
                 <Frame NavigationUIVisibility="Hidden" Background="DarkGray" 

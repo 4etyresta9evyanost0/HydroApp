@@ -29,9 +29,9 @@ namespace HydroApp
             context.Productions.Load();
             InitializeComponent();
 
-
-            Construction[] array = new Construction[context.Constructions.Local.Count];
-            context.Constructions.Local.ToList().CopyTo(array);
+            var tempArr = context.Constructions.Local.Where(x => x.Price != null && x.Price > 0).ToList();
+            Construction[] array = new Construction[tempArr.Count];
+            tempArr.CopyTo(array);
             var list = new List<Construction>(array);
             for (int i = 0; i < list.Count; i++)
             {
