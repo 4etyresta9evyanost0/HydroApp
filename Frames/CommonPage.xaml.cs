@@ -36,44 +36,52 @@ namespace HydroApp
             _yearUpDown.Value = _yearUpDown.Maximum = DateTime.Now.Year;
             _monthUpDown.Value = DateTime.Now.Month;
 
-            // generate sample data (arrays of individual DateTimes and values)
-            int pointCount = 100;
-            Random rand = new Random(0);
-            double[] values = ScottPlot.DataGen.RandomWalk(rand, pointCount);
-            DateTime[] dates = Enumerable.Range(0, pointCount)
-                                          .Select(x => new DateTime(2016, 06, 27).AddDays(x))
-                                          .ToArray();
-
-            // use LINQ and DateTime.ToOADate() to convert DateTime[] to double[]
-            double[] xs = dates.Select(x => x.ToOADate()).ToArray();
-
-            // plot the double arrays using a traditional scatter plot
-            var plt = mainPlot.Plot;
-            plt.AddScatter(xs, values);
-
-            // indicate the horizontal axis tick labels should display DateTime units
-            plt.XAxis.DateTimeFormat(true);
-
-            // add padding to the right to prevent long dates from flowing off the figure
-            plt.YAxis2.SetSizeLimit(min: 40);
-
-            // save the output
-            plt.Title("Scatter Plot with DateTime Axis");
-
-            mainPlot.Refresh();
-
             Loaded += Page_Loaded;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            mainPlot.plt.Clear();
+
+            Context.Commissions.Load();
+            Context.CommissionDetails.Load();
+            Context.Clients.Load();
+            Context.Constructions.Load();
+            var firstPlot = from comDet in Context.CommissionDetails.Local
+                       join com in Context.Commissions.Local on comDet.IdCommission equals com.Id
+                       join client in Context.Clients.Local on com.Client equals client.Id
+                       join constr in Context.Constructions.Local on comDet.IdConstruction equals constr.Id
+                       select (com.Id, constr.Price * comDet.ConstructionsAmount, com.CommissionDate, com.ExecutionDate) into sel
+                       group sel by sel.Item1 into g
+                       select (g.Key, g.Sum(x => x.Item2), g.ElementAt(0).CommissionDate, g.ElementAt(0).ExecutionDate);
+
+            firstPlot = firstPlot.OrderBy(x => x.CommissionDate).OrderBy(x=> x.ExecutionDate);
+
+            double[] values = firstPlot.Select(x => Convert.ToDouble(x.Item2 ?? 0)).ToArray();
+            DateTime[] dates = firstPlot.Select(x => x.ExecutionDate ?? x.CommissionDate).ToArray();//{ DateTime.Now, DateTime.Now.AddDays(1), DateTime.Now.AddDays(2) };
+
+            double[] xs = dates.Select(x => x.ToOADate()).ToArray();
+            var plt = mainPlot.Plot;
+            plt.AddScatter(xs, values);
+            plt.XAxis.DateTimeFormat(true);
+            plt.YAxis2.SetSizeLimit(min: 40);
+            plt.Title("Заказы");
+
+            mainPlot.Refresh();
         }
 
         private void YearReport_Button_Click(object sender, RoutedEventArgs e)
         {
-            int year = _yearUpDown.Value ?? DateTime.Today.Year; // Как-то получить год или месяц
+            Report(true);
+        }
 
+        private void MonthReport_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Report(false);
+        }
+
+        private void Report(bool isYear)
+        {
             // загрузка
 
             Context.Workshops.Load();
@@ -91,16 +99,25 @@ namespace HydroApp
             Context.Commissions.Load();
 
             //
+            int year = _yearUpDown.Value ?? DateTime.Today.Year;
+            int month = _monthUpDown.Value ?? DateTime.Today.Month;
+            var dt = new DateTime(year, month, 1);
+
             var listCommissions = new List<(string, DateTime, DateTime?, decimal)>(); // название компании, 
             var listWorkshops = new List<(string, int, decimal)>();
             var listWorkers = new List<(string, int, decimal)>();
 
 
             // Заказы
-            var localComs = from coms in Context.Commissions.Local
-                            where (coms.ExecutionDate != null && coms.ExecutionDate.Value.Year == year) ||
-                            (coms.CommissionDate.Year == year)
-                            select coms;
+            IEnumerable<Commission>? localComs;
+            localComs =
+                from coms in Context.Commissions.Local
+                where (coms.ExecutionDate != null && coms.ExecutionDate.Value.Year == year) ||
+                (coms.CommissionDate.Year == year) &&
+                (isYear || (coms.ExecutionDate != null && coms.ExecutionDate.Value.Month == month) ||
+                (coms.CommissionDate.Month == month))
+                select coms;
+
 
             int allCommissions = localComs.Count();
             int allDetailForCommissions = 0;
@@ -110,107 +127,50 @@ namespace HydroApp
                 listCommissions.Add((el.ClientNavigation.Name,
                 el.CommissionDate,
                 el.ExecutionDate,
-                el.CommissionDetails.ToList().Sum(x=>x.ConstructionsAmount * x.IdConstructionNavigation.Price ?? 0)));
+                el.CommissionDetails.ToList().Sum(x => x.ConstructionsAmount * x.IdConstructionNavigation.Price ?? 0)));
 
                 allDetailForCommissions += el.CommissionDetails.ToList().Sum(x => x.ConstructionsAmount);
             }
 
             // Цеха
 
-            //var workshopsLocal = Context.Workshops.Local.ToList();
-
-            //var localBatches = from batch in Context.Batches.Local
-            //                   where (batch.CompletionDate != null && batch.CompletionDate.Value.Year == year) ||
-            //                   batch.RequestDate!.Value.Year == year
-            //                   select batch;
-
-            //var test = from batch in Context.Batches.Local
-            //           where (batch.CompletionDate != null && batch.CompletionDate.Value.Year == year) ||
-            //                   batch.RequestDate!.Value.Year == year
-            //           from constr in Context.Constructions.Local
-            //           where batch.Detail == constr.Id
-            //           from worker in Context.Foremen.Local
-            //           where batch.Foreman == worker.Id
-            //           from workshop in Context.Workshops.Local
-            //           where worker.Workshop == workshop.Id
-            //           select (workshop.Name, batch.DetailsMadeAmount, batch.DetailsMadeAmount * constr.Price);
-
-            listWorkshops.AddRange( 
+            listWorkshops.AddRange(
                 from batch in Context.Batches.Local
                 where (batch.CompletionDate != null && batch.CompletionDate.Value.Year == year) ||
-                        batch.RequestDate!.Value.Year == year
+                        batch.RequestDate!.Value.Year == year &&
+                        (isYear || (batch.CompletionDate != null && batch.CompletionDate.Value.Month == month) ||
+                        batch.RequestDate!.Value.Month == month)
                 join constr in Context.Constructions.Local on batch.Detail equals constr.Id
                 join worker in Context.Foremen.Local on batch.Foreman equals worker.Id
                 join workshop in Context.Workshops.Local on worker.Workshop equals workshop.Id
                 select (workshop.Name, batch.DetailsMadeAmount, batch.DetailsMadeAmount * constr.Price) into selection
                 group selection by selection.Name into g
-                select(g.Key, g.Sum(x => x.DetailsMadeAmount), g.Sum(x => x.Item3 != null ? x.Item3!.Value : 0m)));
+                select (g.Key, g.Sum(x => x.DetailsMadeAmount), g.Sum(x => x.Item3 != null ? x.Item3!.Value : 0m)));
 
+            // Сотрудники
 
-            // А вот в SQL это было бы:
-            //
-            //      SELECT SUM(DetailsMadeAmount) as sm, SUM(DetailsMadeAmount * Constructions.Price) as m, Workshops.Name
-            //      FROM Batch, Constructions, Foremen INNER JOIN Workshops ON (Foremen.Workshop = Workshops.Id)
-            //      WHERE Year(RequestDate) = 2023 and Batch.Detail = Constructions.Id and Batch.Foreman = Foremen.Id
-            //      GROUP BY Workshops.Id, Workshops.Name
-
-
-
-            listWorkers.AddRange( 
+            listWorkers.AddRange(
                 from batch in Context.Batches.Local
                 where (batch.CompletionDate != null && batch.CompletionDate.Value.Year == year) ||
-                        batch.RequestDate!.Value.Year == year
+                        batch.RequestDate!.Value.Year == year &&
+                        (isYear || (batch.CompletionDate != null && batch.CompletionDate.Value.Month == month) ||
+                        batch.RequestDate!.Value.Month == month)
                 join constr in Context.Constructions.Local on batch.Detail equals constr.Id
                 join worker in Context.Foremen.Local on batch.Foreman equals worker.Id
                 select (worker.IdNavigation.FullFIO, batch.DetailsMadeAmount, batch.DetailsMadeAmount * constr.Price) into selection
                 group selection by selection.FullFIO into g
                 select (g.Key, g.Sum(x => x.DetailsMadeAmount), g.Sum(x => x.Item3 != null ? x.Item3!.Value : 0m)));
 
-            //select(batch.DetailsMadeAmount, worker.IdNavigation.FullInfo, constr.Name, batch.DetailsMadeAmount * constr.Price, workshop.Name); 
-            //var test2 = from obj in test
-            //            where obj.item
-
-            //localBatches.ElementAt(0).ForemanNavigation.                   
-
-            //for (int i = 0; i <)
 
             var fir = listWorkers.Sum(x => x.Item2);
-            var sec = listWorkshops.Sum(x => x.Item2);
-
-
+            //var sec = listWorkshops.Sum(x => x.Item2); // если нужна гарантия
             int allDetailsAmount = fir;
-            
-            
-            decimal totalIncome = listCommissions.Sum(x=>x.Item4);
+            decimal totalIncome = listCommissions.Sum(x => x.Item4);
 
 
             try
             {
-                
-                // TO BE REMOVED
-
-                //listCommissions = new List<(string, DateTime, DateTime?, decimal)>
-                //{
-                //    ("ОАО \"НефтеГазТрансБашМеталл\"", DateTime.Now.AddMonths(-6), DateTime.Now, 1425411.25M),
-                //    ("ПО \"Стрела\"", DateTime.Now, null, 512651M),
-                //};
-
-                //listWorkshops = new List<(string, int, decimal)>
-                //{
-                //    ("Механический", 1244, 765123.12M),
-                //    ("Сварочный", 1935, 12451M),
-                //    ("Сборочный", 1259, 25612M),
-                //};
-
-                //listWorkers = new List<(string, int, decimal)>
-                //{
-                //    ("И.И. Иванов", 232, 765123.12M),
-                //    ("Б.Б. Борисов", 125, 12451M),
-                //    ("В.В. Вадимов", 521, 25612M),
-                //};
-
-
-                using (var document = DocX.Create($"Documents\\ГодовойОтчёт[{year}].docx")) // {DateTime.Now.ToString("dd-MM-yy.HH-mm-ss.fff")}
+                using (var document = DocX.Create("Documents\\" + (isYear ? $"ГодовойОтчёт[{year}].docx" : $"МесячныйОтчёт[{dt:yyy MMMM}].docx"))) // {DateTime.Now.ToString("dd-MM-yy.HH-mm-ss.fff")}
                 {
                     document.SetDefaultFont(
                         new Xceed.Document.NET.Font("Times New Roman"),
@@ -229,7 +189,7 @@ namespace HydroApp
                     .Alignment = Alignment.right;
 
                     p = document.InsertParagraph();
-                    p.Append("Год: " + year.ToString())
+                    p.Append(isYear ? $"Год: {year}" : $"Месяц: {month}")
                         .Spacing(0)
                     .Alignment = Alignment.right;
 
@@ -301,7 +261,7 @@ namespace HydroApp
                     t.Alignment = Alignment.center;
                     t.SetWidthsPercentage(new float[] { 5f, 32f, 31f, 32f }, 1000);
                     // Заголовок
-                    header = new string[]{"№", "Работник", "Создано деталей (шт.)", "На сумму (р.)"};
+                    header = new string[] { "№", "Работник", "Создано деталей (шт.)", "На сумму (р.)" };
                     for (int i = 0; i < header.Length; i++)
                         t.Rows[0].Cells[i].Paragraphs[0].Append(header[i]);
                     t.Rows[0].Cells.ForEach(x => { x.FillColor = Color.LightGray; x.Paragraphs[0].Bold().Alignment = Alignment.center; });
@@ -312,7 +272,7 @@ namespace HydroApp
                         t.Rows[1 + i].Cells[1].Paragraphs[0].Append(listWorkers[i].Item1);
                         t.Rows[1 + i].Cells[2].Paragraphs[0].Append(listWorkers[i].Item2.ToString());
                         t.Rows[1 + i].Cells[3].Paragraphs[0].Append(listWorkers[i].Item3.ToString("F2"));
-                    }    
+                    }
                     p = document.InsertParagraph();
                     p.Append($"\r\nПродуктивность сотрудников цехов:");
                     p.InsertTableAfterSelf(t);
@@ -322,19 +282,14 @@ namespace HydroApp
                     // Save this document to disk.
                     document.Save();
                 }
-                MessageBox.Show("Отчёт успешно создан","Успех");
+                MessageBox.Show("Отчёт успешно создан", "Успех");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show($"Отчёт не был создан:\r\n{ex.Message}", "Ошибка");
             }
-
         }
 
-        private void MonthReport_Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }
 
