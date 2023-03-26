@@ -11,5 +11,19 @@
 
     <Grid Background="White">
         <Label Content="Пока что здесь ничего нет."></Label>
+        <CheckBox x:Name="CB" Content="?" Style="{StaticResource {x:Type ToggleButton}}" Width="50" Height="50" Background="White" BorderThickness="0">
+            <CheckBox.Triggers>
+                <EventTrigger RoutedEvent="CheckBox.Checked">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation From="White" To="Black"
+                                            Storyboard.TargetProperty="(ToggleButton.Background).(SolidColorBrush.Color)"
+                                            Duration="0:0:2">
+                            </ColorAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </CheckBox.Triggers>
+        </CheckBox>
     </Grid>
 </Page>

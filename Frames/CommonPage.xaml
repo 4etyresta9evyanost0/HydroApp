@@ -3,12 +3,34 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:local="clr-namespace:HydroApp"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="CommonPage">
+      Title="CommonPage"
+      d:DesignHeight="368" d:DesignWidth="618"
+      Background="White"
+      DataContext="{DynamicResource tableVm}">
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="10*"/>
+        </Grid.RowDefinitions>
+        <WpfPlot Margin="20,20,20,20" x:Name="mainPlot" ></WpfPlot>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <xctk:IntegerUpDown x:Name="_yearUpDown" Minimum="1970" AllowTextInput="False" Margin="5,5,5,5" Grid.Column="0" Grid.Row="0"></xctk:IntegerUpDown>
+            <xctk:IntegerUpDown x:Name="_monthUpDown" Minimum="1" Maximum="12" AllowTextInput="False" Margin="5,5,5,5" Grid.Column="1"  Grid.Row="0"></xctk:IntegerUpDown>
+            <Button Margin="5,5,5,5" Grid.Column="0" Content="Отчёт за год" Click="YearReport_Button_Click" Grid.Row="1"></Button>
+            <Button Margin="5,5,5,5" Grid.Column="1" Content="Отчёт за месяц" Click="MonthReport_Button_Click" Grid.Row="1"></Button>
+        </Grid>
     </Grid>
 </Page>

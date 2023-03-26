@@ -30,5 +30,7 @@ public partial class Employee
 
     public string FullInfo { get => $"{Id}: {FIO}"; }
 
+    public string FullFIO { get => $"{Surname} {Firstname}{(Patronym == null || Patronym == "" ? "" : $" {Patronym}")}"; }
+
     public override string ToString() => FullInfo;
 }

@@ -25,6 +25,7 @@ namespace HydroApp
         SupplyViewModel supplyVm;
         CommissionViewModel commissVm;
         BatchViewModel batchVm;
+        CommonPageViewModel commonPageVm;
 
         List<string> _mainDBTables = new List<string> {
             "CommissionDetails",
@@ -114,7 +115,15 @@ namespace HydroApp
                 OnPropertyChanged(nameof(BatchVm));
             }
         }
-
+        public CommonPageViewModel CommonPageVm
+        {
+            get => commonPageVm;
+            set
+            {
+                commonPageVm = value;
+                OnPropertyChanged(nameof(CommonPageVm));
+            }
+        }
 
         #endregion
 
@@ -168,6 +177,7 @@ namespace HydroApp
             supplyVm = new SupplyViewModel(_mainDb);
             commissVm = new CommissionViewModel(_mainDb);
             batchVm = new BatchViewModel(_mainDb);
+            commonPageVm = new CommonPageViewModel(_mainDb);
 
 
             _dbs = new DbContext[] { _mainDb, _userDb };

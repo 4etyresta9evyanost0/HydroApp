@@ -72,7 +72,7 @@
                 </StackPanel>
             </StackPanel>
             <Label Grid.Column="1" Content="Все поставки материалов:"/>
-            <ListBox Grid.Column="1" Margin="5,25,5,5"
+            <ListBox Grid.Column="1" Grid.RowSpan="2" Margin="5,25,5,5"
                      SelectedItem="{Binding SelectedItem}"
                      SelectedIndex="{Binding SelectedIndex}"
                      ItemsSource="{Binding Batches, UpdateSourceTrigger=PropertyChanged,IsAsync=True, Delay=50}">
