@@ -17,7 +17,9 @@ namespace HydroApp
     {
         Guest = -1,
         Admin = 0,
-        Constructor = 1,
-        Common = 2
+        Commissioner = 1,
+        Constructor = 2,
+        ChiefWorker = 3,
+        Common = 4,
     }
 }

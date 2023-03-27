@@ -23,6 +23,7 @@ using System.IO;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Runtime;
+using System.Data.Entity;
 
 namespace HydroApp
 {
@@ -135,12 +136,6 @@ namespace HydroApp
         }
     }
 
-    public class Node
-    {
-        public string? Name { get; set; }
-        public ObservableCollection<Node>? Nodes { get; set; }
-    }
-
     internal class MainViewModel : ViewModel
     {
         ObservableCollection<Page> pages = new ObservableCollection<Page>();
@@ -237,7 +232,7 @@ namespace HydroApp
                 OnPropertyChanged(nameof(IsInitialized));
             }
         }
-        UserType userType;
+        UserType userType = UserType.Guest;
 
         // Json
         //public const JsonDocument settingsJson;
@@ -341,6 +336,51 @@ namespace HydroApp
 
         }
 
+        #region Sidebar buttons bools
+
+        bool isAuthorized = false;
+        bool isCommissioner = false;
+        bool isConstructor = false;
+        bool isChief = false;
+
+        public bool IsChief
+        {
+            get => isChief;
+            set
+            {
+                isChief = value;
+                OnPropertyChanged(nameof(IsChief));
+            }
+        }
+        public bool IsConstructor
+        {
+            get => isConstructor;
+            set
+            {
+                isConstructor = value;
+                OnPropertyChanged(nameof(IsConstructor));
+            }
+        }
+        public bool IsCommissioner
+        {
+            get => isCommissioner;
+            set
+            {
+                isCommissioner = value;
+                OnPropertyChanged(nameof(IsCommissioner));
+            }
+        }
+        public bool IsAuthorized
+        {
+            get=> isAuthorized;
+            set
+            {
+                isAuthorized = value;
+                OnPropertyChanged(nameof(IsAuthorized));
+            }
+        }
+        #endregion
+
         public async Task CreateJSONSettingsFile()
         {
             using (StreamWriter fs = new StreamWriter(new FileStream("settings.json", FileMode.Create)))
@@ -394,12 +434,22 @@ namespace HydroApp
             set
             {
                 userType = value;
+                IsChief = IsCommissioner = IsConstructor = false;
                 OnPropertyChanged(nameof(UserType));
+                switch ( value)
+                {
+                    case UserType.Admin:
+                        IsChief = IsCommissioner = IsConstructor = true; break;
+                    case UserType.Commissioner: IsCommissioner = true; break;
+                    case UserType.Constructor: IsConstructor = true; break;
+                    case UserType.ChiefWorker: IsChief = true; break;
+                }
             }
         }
-
+        int? _userId;
         public async Task<bool> Authorize(string username, string password)
         {
+            IsAuthorized = false;
             var command = $@"SELECT * FROM [Users] WHERE Nickname = '{username}';";
             SqlDataAdapter adapter = new SqlDataAdapter(command, UserConnection);
             // Создаем объект Dataset
@@ -437,12 +487,16 @@ namespace HydroApp
             {
                 UserSettings.Password = null;
             }
-            CurrentPage = mainPage;
-            //TableAdapterManager tableAdapterManager = new TableAdapterManager();
-            //TODO-REDO
+            
 
+            _userId = (int)row[0];
+            //TableAdapterManager tableAdapterManager = new TablfeAdapterManager();
+            //TODO-REDO
+            //UserContext.Users.Load();
+            UserType = (UserType)(byte)row[3];//(UserType)(UserContext.Users.Find(_userId).Type);
             await CreateJSONSettingsFile();
-            return true;
+            CurrentPage = mainPage;
+            return IsAuthorized = true;
         }
         // server page commands
         public RelayCommand? ConnectToServerCommand
@@ -549,6 +603,10 @@ namespace HydroApp
 
                 MainContext = new HydropressDbContext(Settings.Default.MainDbConnectionString);
                 UserContext = new HydropressUserDbContext(Settings.Default.UserDbConnectionString);
+                UserContext.Users.Load();
+                UserContext.UserMessages.Load();
+                UserContext.UserMessagesContents.Load();
+                IsInitialized = true;
             }
 
             return res.Result == null;

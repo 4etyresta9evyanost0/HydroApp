@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\LOGO.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DocX" Version="2.4.0" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
@@ -29,12 +33,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\" />
     <Folder Include="Themes\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LoadingSpinner\LoadingSpinner.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\LOGO.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

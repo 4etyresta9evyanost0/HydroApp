@@ -14,7 +14,7 @@
         <converters:ServerListStatusToBoolean x:Key="ServerListStatusToBoolean"/>
         <converters:ServerListStatusToVisibility x:Key="ServerListStatusToVisibility"/>
         <converters:EnumToInteger x:Key="EnumToInteger"/>
-
+        <converters:BooleanOrConverter x:Key="BooleanOrConverter"/>
         <Style x:Key="RectBorderStyle" TargetType="Rectangle">
             <Setter Property="Focusable" Value="False" />
             <Setter Property="Fill" Value="Transparent" />
@@ -119,31 +119,119 @@
                         </Grid.RowDefinitions>-->
                         <Button Content="Авторизация"
                                 Command="{Binding ChangeFrame}"
-                                CommandParameter="{Binding AuthPage}"/>
+                                CommandParameter="{Binding AuthPage}" Margin="10,10,10,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsInitialized}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Content="Подключение" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
                                 CommandParameter="{Binding ServerPage}"/>
                         <Button Content="Администратор" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame }"
-                                CommandParameter="{Binding AdminPage}"/>
+                                CommandParameter="{Binding AdminPage}" Margin="10,10,10,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding UserType}" Value="{x:Static local:UserType.Admin}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Content="Заказы"
                                 Command="{Binding ChangeFrame}"
-                                CommandParameter="{Binding CommissionPage}"/>
+                                CommandParameter="{Binding CommissionPage}" Margin="10,10,10,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCommissioner}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Content="Поставки"
                                 Command="{Binding ChangeFrame}"
-                                CommandParameter="{Binding SupplyPage}"/>
-                        <Button Content="Изготовление деталей" VerticalAlignment="Bottom"
-                                Command="{Binding ChangeFrame}"
-                                CommandParameter="{Binding BatchPage}"/>
+                                CommandParameter="{Binding SupplyPage}" Margin="10,10,10,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCommissioner}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Content="Конструктор" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
-                                CommandParameter="{Binding ConstructorPage}"/>
+                                CommandParameter="{Binding ConstructorPage}" Margin="10,10,10,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsConstructor}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="Изготовление деталей" VerticalAlignment="Bottom"
+                                Command="{Binding ChangeFrame}"
+                                CommandParameter="{Binding BatchPage}" Margin="10,10,10,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChief}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Content="Просмотр" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
-                                CommandParameter="{Binding CommonPage}"/>
+                                CommandParameter="{Binding CommonPage}" Margin="10,10,10,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsAuthorized}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <Button Content="Меню" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
-                                CommandParameter="{Binding MainPage}"/>
+                                CommandParameter="{Binding MainPage}" Margin="10,10,10,0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsAuthorized}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
                         <!--<Button Content="Мессенджер" VerticalAlignment="Bottom"
                                 Command="{Binding ChangeFrame}"
                                 CommandParameter="{Binding MainPage}"/>-->

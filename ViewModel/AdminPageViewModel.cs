@@ -42,17 +42,11 @@ namespace HydroApp
             "User_Messages_Content",
         };
 
-        public ObservableCollection<Node> MainNodes = new ObservableCollection<Node>();
-
         private object selectedTable;
         private object selectedDatabase;
 
         public AdminPageViewModel()
         {
-            for (int i = 0; i < MainDBTables.Count; i++)
-            {
-                MainNodes.Add(new Node { Name = MainDBTables[0] });
-            }
         }
 
         public object SelectedTable

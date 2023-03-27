@@ -10,20 +10,11 @@
       DataContext="{DynamicResource Mvm}">
 
     <Grid Background="White">
-        <Label Content="Пока что здесь ничего нет."></Label>
-        <CheckBox x:Name="CB" Content="?" Style="{StaticResource {x:Type ToggleButton}}" Width="50" Height="50" Background="White" BorderThickness="0">
-            <CheckBox.Triggers>
-                <EventTrigger RoutedEvent="CheckBox.Checked">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <ColorAnimation From="White" To="Black"
-                                            Storyboard.TargetProperty="(ToggleButton.Background).(SolidColorBrush.Color)"
-                                            Duration="0:0:2">
-                            </ColorAnimation>
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </CheckBox.Triggers>
-        </CheckBox>
+        <Image Width="385" Height="200" Margin="0,-150,0,0" Source="/Resources/LOGO.png"/>
+        <Label Width="385" Height="200" 
+               Margin="0,150,0,0" FontSize="32" 
+               HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
+            <TextBlock TextWrapping="Wrap">Чтобы начать работу нажмите на любую из кнопок слева</TextBlock>
+        </Label>
     </Grid>
 </Page>
