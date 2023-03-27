@@ -177,7 +177,7 @@ namespace HydroApp
                         14,
                         Color.Black);
                     var p = document.InsertParagraph();
-                    p.Append("Отчёт")
+                    p.Append("Аналитический отчёт по продажам от заказов")
                     .FontSize(16)
                     .Bold()
                     .Spacing(0)
